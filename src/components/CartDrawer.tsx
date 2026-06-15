@@ -4,9 +4,10 @@ interface Props {
   open: boolean
   onClose: () => void
   onCheckout: () => void
+  checkingOut?: boolean
 }
 
-export default function CartDrawer({ open, onClose, onCheckout }: Props) {
+export default function CartDrawer({ open, onClose, onCheckout, checkingOut }: Props) {
   const items = useCart()
   const total = cart.total()
 
@@ -87,9 +88,12 @@ export default function CartDrawer({ open, onClose, onCheckout }: Props) {
               <span style={{ fontSize:11, letterSpacing:'.15em', textTransform:'uppercase', color:'var(--muted)', fontWeight:500 }}>Subtotal</span>
               <strong style={{ fontFamily:'var(--serif)', fontSize:28 }}>${total}</strong>
             </div>
-            <button className="btn btn-gold" style={{ width:'100%', marginBottom:10 }} onClick={onCheckout}>
-              Proceed to Checkout
+            <button className="btn btn-gold" style={{ width:'100%', marginBottom:10, opacity: checkingOut ? .7 : 1 }} onClick={onCheckout} disabled={checkingOut}>
+              {checkingOut ? 'Redirecting to secure checkout…' : 'Proceed to Checkout'}
             </button>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, marginBottom:6, fontSize:10, letterSpacing:'.1em', color:'var(--muted-light)', textTransform:'uppercase' }}>
+              <span>🔒 Secure payment</span><span>·</span><span> Pay</span><span>·</span><span>G Pay</span>
+            </div>
             <button className="continue-shopping" onClick={onClose}
               style={{ fontSize:11, letterSpacing:'.15em', textTransform:'uppercase', color:'var(--muted)', textAlign:'center', display:'block', cursor:'pointer', background:'none', border:'none', width:'100%' }}>
               Continue Shopping

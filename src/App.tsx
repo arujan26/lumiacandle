@@ -3,13 +3,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import Header from './components/Header'
 import CartDrawer from './components/CartDrawer'
-import CheckoutModal from './components/CheckoutModal'
+import { startCheckout } from './lib/checkout'
 import HomePage from './pages/HomePage'
 import ShopCandlesPage from './pages/ShopCandlesPage'
 import ProductPage from './pages/ProductPage'
 import ShopStickersPage from './pages/ShopStickersPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
+import OrderSuccessPage from './pages/OrderSuccessPage'
 
 function Footer() {
   return (
@@ -50,11 +51,16 @@ function Footer() {
 
 export default function App() {
   const [cartOpen, setCartOpen] = useState(false)
-  const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const [checkingOut, setCheckingOut] = useState(false)
 
-  const handleCheckout = () => {
-    setCartOpen(false)
-    setTimeout(() => setCheckoutOpen(true), 350)
+  const handleCheckout = async () => {
+    if (checkingOut) return
+    setCheckingOut(true)
+    const result = await startCheckout()
+    setCheckingOut(false)
+    if (!result.ok) {
+      alert(result.error || 'Checkout is temporarily unavailable. Please try again.')
+    }
   }
 
   return (
@@ -68,11 +74,11 @@ export default function App() {
           <Route path="/shop/stickers" element={<ShopStickersPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/order/success" element={<OrderSuccessPage />} />
         </Routes>
       </main>
       <Footer />
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} onCheckout={handleCheckout} />
-      <CheckoutModal open={checkoutOpen} onClose={() => setCheckoutOpen(false)} />
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} onCheckout={handleCheckout} checkingOut={checkingOut} />
     </BrowserRouter>
   )
 }
