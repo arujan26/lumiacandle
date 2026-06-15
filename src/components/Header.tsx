@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useCart } from '../lib/cart'
+import { useSettings } from '../lib/settings'
 
 interface HeaderProps {
   onCartOpen: () => void
@@ -13,6 +14,7 @@ export default function Header({ onCartOpen }: HeaderProps) {
   const count = items.reduce((s, i) => s + i.quantity, 0)
   const location = useLocation()
   const isHome = location.pathname === '/'
+  const settings = useSettings()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -52,7 +54,7 @@ export default function Header({ onCartOpen }: HeaderProps) {
         fontSize: 10, letterSpacing: '.2em', textAlign: 'center',
         padding: '10px 24px', textTransform: 'uppercase', fontWeight: 500,
       }}>
-        Hand-poured in small batches &nbsp;·&nbsp; $35 each &nbsp;·&nbsp; Fast USPS shipping · Ships in 2–5 business days
+        {settings.announcement}
       </div>
 
       <header style={{

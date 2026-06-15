@@ -1,6 +1,6 @@
 import { Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth, signOut } from '../../lib/auth'
-import { ADMIN_HOME, ADMIN_ORDERS, ADMIN_LOGIN } from '../../lib/adminBase'
+import { ADMIN_HOME, ADMIN_ORDERS, ADMIN_MESSAGES, ADMIN_SETTINGS, ADMIN_LOGIN } from '../../lib/adminBase'
 
 export default function AdminLayout() {
   const { allowed, loading } = useAuth()
@@ -36,6 +36,8 @@ export default function AdminLayout() {
         <nav style={{ padding: '16px 0', flex: 1 }}>
           <NavLink to={ADMIN_HOME} end style={linkStyle}>Products</NavLink>
           <NavLink to={ADMIN_ORDERS} style={linkStyle}>Orders</NavLink>
+          <NavLink to={ADMIN_MESSAGES} style={linkStyle}>Messages</NavLink>
+          <NavLink to={ADMIN_SETTINGS} style={linkStyle}>Settings</NavLink>
         </nav>
         <div style={{ padding: 16, borderTop: '1px solid rgba(255,253,248,.1)' }}>
           <a href="https://lumiacandle.com" target="_blank" rel="noreferrer" style={{ display: 'block', fontSize: 11, color: 'rgba(255,253,248,.5)', textDecoration: 'none', marginBottom: 12, letterSpacing: '.1em' }}>↗ View store</a>

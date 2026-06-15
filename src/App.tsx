@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useNavigate, Navigate } from 'react-router-dom'
 import './index.css'
 import { isDashboardHost } from './lib/adminBase'
+import { useSettings } from './lib/settings'
 import Header from './components/Header'
 import CartDrawer from './components/CartDrawer'
 import HomePage from './pages/HomePage'
@@ -16,6 +17,8 @@ import AdminLayout from './pages/admin/AdminLayout'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
+import AdminMessages from './pages/admin/AdminMessages'
+import AdminSettings from './pages/admin/AdminSettings'
 
 function Footer() {
   return (
@@ -57,6 +60,11 @@ function Footer() {
 function StorefrontLayout() {
   const [cartOpen, setCartOpen] = useState(false)
   const navigate = useNavigate()
+  const settings = useSettings()
+
+  useEffect(() => {
+    if (settings.accent) document.documentElement.style.setProperty('--gold', settings.accent)
+  }, [settings.accent])
 
   const handleCheckout = () => {
     setCartOpen(false)
@@ -82,6 +90,8 @@ function DashboardApp() {
       <Route element={<AdminLayout />}>
         <Route path="/" element={<AdminProducts />} />
         <Route path="/orders" element={<AdminOrders />} />
+        <Route path="/messages" element={<AdminMessages />} />
+        <Route path="/settings" element={<AdminSettings />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
@@ -108,6 +118,8 @@ function StoreApp() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminProducts />} />
         <Route path="orders" element={<AdminOrders />} />
+        <Route path="messages" element={<AdminMessages />} />
+        <Route path="settings" element={<AdminSettings />} />
       </Route>
     </Routes>
   )

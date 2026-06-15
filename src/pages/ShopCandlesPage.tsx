@@ -3,16 +3,18 @@ import { Link } from 'react-router-dom'
 import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
 import { accentFor, EMOTION_PASTELS } from '../lib/accents'
+import { useSettings } from '../lib/settings'
 
 export default function ShopCandlesPage() {
   const [hovered, setHovered] = useState<string | null>(null)
   const { products } = useProducts('candle')
+  const settings = useSettings()
 
   return (
     <>
       {/* Image banner */}
       <div style={{ width: '100%', height: 'clamp(280px,42vh,460px)', position: 'relative', overflow: 'hidden' }}>
-        <img src="/shop-candles-hero.webp" alt="The Lumia candle collection" style={{
+        <img src={settings.hero_shop_candles || '/shop-candles-hero.webp'} alt="The Lumia candle collection" style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
           objectFit: 'cover', objectPosition: 'center 52%',
         }} />

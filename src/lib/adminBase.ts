@@ -6,3 +6,5 @@ export const isDashboardHost =
 export const ADMIN_HOME = isDashboardHost ? '/' : '/admin'
 export const ADMIN_LOGIN = isDashboardHost ? '/login' : '/admin/login'
 export const ADMIN_ORDERS = isDashboardHost ? '/orders' : '/admin/orders'
+export const ADMIN_MESSAGES = isDashboardHost ? '/messages' : '/admin/messages'
+export const ADMIN_SETTINGS = isDashboardHost ? '/settings' : '/admin/settings'

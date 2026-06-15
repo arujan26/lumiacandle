@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
+import { useSettings } from '../lib/settings'
 
 const FEATURES = ['Waterproof', 'Durable vinyl', 'Perfect for laptops, journals, water bottles & iPads']
 
 export default function ShopStickersPage() {
   const { products } = useProducts('sticker')
+  const settings = useSettings()
   const [hovered, setHovered] = useState<string | null>(null)
   const [added, setAdded] = useState<string | null>(null)
   const hasStickers = products.length > 0
@@ -21,7 +23,7 @@ export default function ShopStickersPage() {
     <>
       {/* Image banner */}
       <div style={{ width: '100%', height: 'clamp(300px,46vh,500px)', position: 'relative', overflow: 'hidden' }}>
-        <img src="/shop-stickers-hero.webp" alt="Lumia sticker collections" style={{
+        <img src={settings.hero_shop_stickers || '/shop-stickers-hero.webp'} alt="Lumia sticker collections" style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
           objectFit: 'cover', objectPosition: 'center 42%',
         }} />

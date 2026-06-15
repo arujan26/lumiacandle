@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom'
 import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
 import { accentFor } from '../lib/accents'
+import { useSettings } from '../lib/settings'
 
 export default function HomePage() {
   const { products } = useProducts('candle')
+  const settings = useSettings()
   return (
     <>
       {/* Hero */}
@@ -14,7 +16,7 @@ export default function HomePage() {
       }}>
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'url(/hero.webp)',
+          backgroundImage: `url(${settings.hero_home || '/hero.webp'})`,
           backgroundSize: 'cover', backgroundPosition: 'center 40%',
         }} />
         <div style={{
