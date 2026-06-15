@@ -47,8 +47,10 @@ export default function CartDrawer({ open, onClose, onCheckout }: Props) {
             items.map(item => (
               <div key={item.product.id} style={{ display:'flex', gap:16, padding:'20px 0', borderBottom:'1px solid var(--line)' }}>
                 <div style={{
-                  width:72, height:90, flexShrink:0, backgroundSize:'cover', backgroundPosition:'center',
-                  background: item.product.image_url ? `url(${item.product.image_url})` : 'var(--cream)',
+                  width:72, height:90, flexShrink:0,
+                  backgroundColor: 'var(--cream)',
+                  backgroundImage: item.product.image_url ? `url(${item.product.image_url})` : 'none',
+                  backgroundSize:'cover', backgroundPosition:'center',
                   display:'flex', alignItems:'center', justifyContent:'center',
                 }}>
                   {!item.product.image_url && <span style={{ fontFamily:'var(--serif)', fontSize:24, color:'var(--champagne)', opacity:.5 }}>✦</span>}
