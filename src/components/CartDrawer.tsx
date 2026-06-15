@@ -82,7 +82,7 @@ export default function CartDrawer({ open, onClose, onCheckout, checkingOut }: P
         {items.length > 0 && (
           <div style={{ padding:'24px 28px', borderTop:'1px solid var(--line)' }}>
             <div style={{ background:'var(--cream)', padding:'12px 16px', fontSize:12, color:'var(--muted)', marginBottom:20, lineHeight:1.6 }}>
-              📦 Shipping is paid separately — we'll confirm the cost before processing.
+              📦 USPS shipping calculated at checkout. Ships in 2–5 business days (US).
             </div>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:16 }}>
               <span style={{ fontSize:11, letterSpacing:'.15em', textTransform:'uppercase', color:'var(--muted)', fontWeight:500 }}>Subtotal</span>

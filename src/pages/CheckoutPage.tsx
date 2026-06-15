@@ -58,9 +58,10 @@ export default function CheckoutPage() {
               </div>
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 14, marginTop: 6, borderTop: '1px solid var(--line)', fontFamily: 'var(--serif)', fontSize: 22 }}>
-              <span>Total</span>
+              <span>Subtotal</span>
               <span>${total}</span>
             </div>
+            <p style={{ fontSize: 11, color: 'var(--muted)', marginTop: 8, textAlign: 'right' }}>+ USPS shipping calculated below</p>
           </div>
         )}
 

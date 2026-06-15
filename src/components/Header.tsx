@@ -52,7 +52,7 @@ export default function Header({ onCartOpen }: HeaderProps) {
         fontSize: 10, letterSpacing: '.2em', textAlign: 'center',
         padding: '10px 24px', textTransform: 'uppercase', fontWeight: 500,
       }}>
-        Hand-poured in small batches &nbsp;·&nbsp; $35 each &nbsp;·&nbsp; Free shipping on orders over $70
+        Hand-poured in small batches &nbsp;·&nbsp; $35 each &nbsp;·&nbsp; Fast USPS shipping · Ships in 2–5 business days
       </div>
 
       <header style={{

@@ -14,11 +14,40 @@ export default function AdminOrders() {
   }
   useEffect(load, [])
 
+  const exportPirateShip = () => {
+    const shippable = orders.filter(o => o.address && (o.status === 'paid' || o.status === 'processing'))
+    if (shippable.length === 0) { alert('No paid/processing orders with an address to export.'); return }
+    const header = ['Order', 'Name', 'Email', 'Phone', 'Address 1', 'City', 'State', 'Zip', 'Country', 'Items', 'Weight (oz)']
+    const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`
+    const rows = shippable.map(o => {
+      const qty = (o.items || []).reduce((s, i) => s + (i.quantity || 0), 0) || 1
+      const weight = qty * 16 + 4 // ~1 lb per candle + packaging
+      const itemsTxt = (o.items || []).map(i => `${i.product_name || i.product_id} x${i.quantity}`).join(' | ')
+      return [o.id.slice(0, 8), o.name, o.email, o.phone, o.address, o.city, o.state, o.zip, o.country || 'US', itemsTxt, weight]
+        .map(esc).join(',')
+    })
+    const csv = [header.map(esc).join(','), ...rows].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `lumia-pirateship-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 'clamp(28px,3.5vw,40px)', marginBottom: 4 }}>Orders</h1>
-        <p style={{ fontSize: 13, color: 'var(--muted)' }}>Customer details, status & shipping updates by email.</p>
+      <div style={{ marginBottom: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <h1 style={{ fontSize: 'clamp(28px,3.5vw,40px)', marginBottom: 4 }}>Orders</h1>
+          <p style={{ fontSize: 13, color: 'var(--muted)' }}>Customer details, status & shipping updates by email.</p>
+        </div>
+        {orders.length > 0 && (
+          <button className="btn btn-outline" style={{ padding: '10px 18px', fontSize: 9 }} onClick={exportPirateShip}>
+            ⬇ Export for Pirate Ship (CSV)
+          </button>
+        )}
       </div>
 
       {loading ? (
