@@ -30,28 +30,30 @@ export default async (req: Request) => {
   }
 
   const cd = session.customer_details
-  const ship = (session as unknown as { collected_information?: { shipping_details?: { address?: Stripe.Address; name?: string } } })
-    .collected_information?.shipping_details
-  const addr = ship?.address || cd?.address || ({} as Stripe.Address)
+  const m = (session.metadata || {}) as Record<string, string>
 
-  const items = (session.line_items?.data || []).map(li => ({
-    product_name: li.description,
-    quantity: li.quantity || 1,
-    unit_price: (li.price?.unit_amount || 0) / 100,
-  }))
+  // Exclude the shipping line item from the product list
+  const items = (session.line_items?.data || [])
+    .filter(li => !(li.description || '').startsWith('Shipping —'))
+    .map(li => ({
+      product_name: li.description,
+      quantity: li.quantity || 1,
+      unit_price: (li.price?.unit_amount || 0) / 100,
+    }))
+  const subtotal = items.reduce((s, i) => s + i.unit_price * i.quantity, 0)
 
   const order = {
     stripe_session_id: session.id,
-    name: ship?.name || cd?.name || null,
-    email: cd?.email || null,
-    phone: cd?.phone || null,
-    address: addr.line1 ? `${addr.line1}${addr.line2 ? ', ' + addr.line2 : ''}` : null,
-    city: addr.city || null,
-    state: addr.state || null,
-    zip: addr.postal_code || null,
-    country: addr.country || null,
+    name: m.ship_name || cd?.name || null,
+    email: cd?.email || session.customer_email || null,
+    phone: m.ship_phone || cd?.phone || null,
+    address: m.ship_street1 ? `${m.ship_street1}${m.ship_street2 ? ', ' + m.ship_street2 : ''}` : null,
+    city: m.ship_city || null,
+    state: m.ship_state || null,
+    zip: m.ship_zip || null,
+    country: m.ship_country || 'US',
     items,
-    subtotal: (session.amount_subtotal || 0) / 100,
+    subtotal,
     amount_total: (session.amount_total || 0) / 100,
     status: 'paid',
     preferred_contact: 'Email',

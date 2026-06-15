@@ -3,6 +3,7 @@ import {
   adminListOrders, adminUpdateOrder, sendOrderUpdateEmail,
   ORDER_STATUSES, type AdminOrder,
 } from '../../lib/ordersApi'
+import { buyLabel } from '../../lib/shipping'
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<AdminOrder[]>([])
@@ -72,8 +73,30 @@ function OrderRow({ order, onChanged }: { order: AdminOrder; onChanged: () => vo
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState('')
 
+  const [labelUrl, setLabelUrl] = useState('')
   const total = order.amount_total ?? order.subtotal ?? 0
   const date = order.created_at ? new Date(order.created_at).toLocaleString() : ''
+
+  const buyShippingLabel = async () => {
+    if (!order.address) { setMsg('No shipping address on this order.'); return }
+    if (!confirm('Buy the cheapest USPS label for this order? (Live mode charges your Shippo balance.)')) return
+    setBusy(true); setMsg('')
+    try {
+      const r = await buyLabel(
+        { name: order.name || '', street1: order.address || '', city: order.city || '', state: order.state || '', zip: order.zip || '', phone: order.phone || '' },
+        order.items || [{ quantity: 1 }],
+      )
+      setTracking(r.tracking_number)
+      setStatus('shipped')
+      setLabelUrl(r.label_url)
+      await adminUpdateOrder(order.id, { status: 'shipped', tracking_code: r.tracking_number })
+      setMsg(`✓ Label bought ($${r.cost.toFixed(2)}) — tracking ${r.tracking_number}`)
+      if (r.label_url) window.open(r.label_url, '_blank')
+      onChanged()
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : 'Label purchase failed')
+    } finally { setBusy(false) }
+  }
 
   const saveAndNotify = async (notify: boolean) => {
     setBusy(true); setMsg('')
@@ -131,6 +154,8 @@ function OrderRow({ order, onChanged }: { order: AdminOrder; onChanged: () => vo
         <input value={tracking} onChange={e => setTracking(e.target.value)} placeholder="Tracking code" style={{ ...ctrl, minWidth: 160 }} />
         <button onClick={() => saveAndNotify(false)} disabled={busy} style={{ ...btn, background: 'transparent', color: 'var(--ink)' }}>Save</button>
         <button onClick={() => saveAndNotify(true)} disabled={busy || !order.email} style={btn}>Save & email customer</button>
+        <button onClick={buyShippingLabel} disabled={busy} style={{ ...btn, background: 'var(--gold)', borderColor: 'var(--gold)' }}>🏷 Buy USPS label</button>
+        {labelUrl && <a href={labelUrl} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: 'var(--gold)', letterSpacing: '.1em', textTransform: 'uppercase' }}>Print label ↗</a>}
         {msg && <span style={{ fontSize: 12, color: msg.startsWith('✓') ? '#3a7a4a' : '#c04a3a' }}>{msg}</span>}
       </div>
     </div>
