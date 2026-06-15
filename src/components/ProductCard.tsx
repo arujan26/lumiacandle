@@ -9,40 +9,45 @@ interface Props {
 
 export default function ProductCard({ product, onOpenModal }: Props) {
   const [qty, setQty] = useState(1)
-
-  const imgStyle: React.CSSProperties = product.image_url
-    ? { backgroundImage: `url(${product.image_url})` }
-    : { background: 'linear-gradient(145deg, var(--cream) 0%, var(--parchment) 100%)' }
+  const [hovered, setHovered] = useState(false)
 
   return (
     <article
       style={{
         background:'var(--ivory)', border:'1px solid var(--line)', overflow:'hidden',
         transition:'transform .4s var(--ease), box-shadow .4s var(--ease)', cursor:'pointer', position:'relative',
+        transform: hovered ? 'translateY(-6px)' : 'none',
+        boxShadow: hovered ? '0 32px 80px rgba(26,20,16,.12)' : 'none',
       }}
-      onMouseEnter={e => {
-        const el = e.currentTarget
-        el.style.transform = 'translateY(-6px)'
-        el.style.boxShadow = '0 32px 80px rgba(26,20,16,.12)'
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget
-        el.style.transform = ''
-        el.style.boxShadow = ''
-      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       onClick={() => onOpenModal(product)}
     >
       <div style={{ position:'relative', overflow:'hidden', aspectRatio:'4/5' }}>
-        <div style={{
-          width:'100%', height:'100%', backgroundSize:'cover', backgroundPosition:'center 55%',
-          transition:'transform .6s var(--ease)',
-          display:'flex', alignItems:'center', justifyContent:'center',
-          ...imgStyle,
-        }}>
-          {!product.image_url && (
+        {product.image_url ? (
+          <img
+            src={product.image_url}
+            alt={product.name}
+            style={{
+              position:'absolute', inset:0,
+              width:'100%', height:'100%',
+              objectFit:'cover',
+              objectPosition:'center center',
+              transition:'transform .6s var(--ease)',
+              transform: hovered ? 'scale(1.04)' : 'scale(1)',
+              display:'block',
+            }}
+          />
+        ) : (
+          <div style={{
+            position:'absolute', inset:0,
+            background:'linear-gradient(145deg, var(--cream) 0%, var(--parchment) 100%)',
+            display:'flex', alignItems:'center', justifyContent:'center',
+          }}>
             <span style={{ fontFamily:'var(--serif)', fontSize:48, color:'var(--champagne)', opacity:.4 }}>✦</span>
-          )}
-        </div>
+          </div>
+        )}
+
         {product.badge && (
           <span style={{
             position:'absolute', top:16, left:16, zIndex:2,
