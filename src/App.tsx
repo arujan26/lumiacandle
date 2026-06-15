@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import './index.css'
 import Header from './components/Header'
 import CartDrawer from './components/CartDrawer'
-import { startCheckout } from './lib/checkout'
 import HomePage from './pages/HomePage'
 import ShopCandlesPage from './pages/ShopCandlesPage'
 import ProductPage from './pages/ProductPage'
 import ShopStickersPage from './pages/ShopStickersPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
+import CheckoutPage from './pages/CheckoutPage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
 
 function Footer() {
@@ -49,22 +49,17 @@ function Footer() {
   )
 }
 
-export default function App() {
+function AppShell() {
   const [cartOpen, setCartOpen] = useState(false)
-  const [checkingOut, setCheckingOut] = useState(false)
+  const navigate = useNavigate()
 
-  const handleCheckout = async () => {
-    if (checkingOut) return
-    setCheckingOut(true)
-    const result = await startCheckout()
-    setCheckingOut(false)
-    if (!result.ok) {
-      alert(result.error || 'Checkout is temporarily unavailable. Please try again.')
-    }
+  const handleCheckout = () => {
+    setCartOpen(false)
+    navigate('/checkout')
   }
 
   return (
-    <BrowserRouter>
+    <>
       <Header onCartOpen={() => setCartOpen(true)} />
       <main>
         <Routes>
@@ -74,11 +69,20 @@ export default function App() {
           <Route path="/shop/stickers" element={<ShopStickersPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/order/success" element={<OrderSuccessPage />} />
         </Routes>
       </main>
       <Footer />
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} onCheckout={handleCheckout} checkingOut={checkingOut} />
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} onCheckout={handleCheckout} />
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppShell />
     </BrowserRouter>
   )
 }

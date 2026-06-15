@@ -83,19 +83,18 @@ export default async (req: Request) => {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
+      ui_mode: 'embedded', // renders the payment form INSIDE our own page
       line_items,
       // Wallets (Apple Pay / Google Pay) are shown automatically by Checkout.
-      payment_method_types: ['card'],
       billing_address_collection: 'auto',
       shipping_address_collection: {
         allowed_countries: ['US', 'CA', 'GB', 'AU', 'BR', 'PT'],
       },
       phone_number_collection: { enabled: true },
-      success_url: `${origin}/order/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/shop/candles?canceled=1`,
+      return_url: `${origin}/order/success?session_id={CHECKOUT_SESSION_ID}`,
     })
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    return new Response(JSON.stringify({ clientSecret: session.client_secret }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     })
