@@ -9,8 +9,17 @@ export default function ShopCandlesPage() {
 
   return (
     <>
-      <section style={{ background: 'var(--cream)', padding: '120px 0 72px', textAlign: 'center' }}>
-        <div className="wrap">
+      <section style={{ position: 'relative', overflow: 'hidden', minHeight: 'clamp(420px,60vh,620px)' }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'url(/shop-candles-hero.webp)',
+          backgroundSize: 'cover', backgroundPosition: 'center 68%',
+        }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(180deg, rgba(245,237,224,.97) 0%, rgba(245,237,224,.74) 28%, rgba(245,237,224,.28) 52%, rgba(245,237,224,0) 82%)',
+        }} />
+        <div className="wrap" style={{ position: 'relative', zIndex: 1, textAlign: 'center', paddingTop: 'clamp(72px,11vh,120px)' }}>
           <span className="eyebrow" style={{ marginBottom: 16, display: 'block' }}>The Collection</span>
           <h1 style={{ fontSize: 'clamp(40px,5vw,64px)', lineHeight: .95 }}>Shop Candles</h1>
           <p className="lead" style={{ margin: '24px auto 0' }}>
