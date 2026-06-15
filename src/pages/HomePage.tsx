@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
+import { accentFor } from '../lib/accents'
 
 export default function HomePage() {
   const { products } = useProducts('candle')
@@ -72,13 +73,14 @@ export default function HomePage() {
                     {p.badge && (
                       <span style={{
                         position: 'absolute', top: 16, left: 16, zIndex: 2,
-                        background: 'var(--gold)', color: 'white', fontSize: 8,
-                        letterSpacing: '.2em', textTransform: 'uppercase', padding: '5px 10px', fontWeight: 500,
+                        background: accentFor(p.emotion), color: 'var(--ink)', fontSize: 8,
+                        letterSpacing: '.18em', textTransform: 'uppercase', padding: '6px 11px', fontWeight: 600,
                       }}>{p.badge}</span>
                     )}
                   </div>
                   <div style={{ padding: 24 }}>
-                    <h3 style={{ fontFamily: 'var(--serif)', fontSize: 24, marginBottom: 6, lineHeight: 1.1 }}>{p.name}</h3>
+                    <h3 style={{ fontFamily: 'var(--serif)', fontSize: 24, marginBottom: 8, lineHeight: 1.1 }}>{p.name}</h3>
+                    <span style={{ display: 'block', width: 30, height: 3, borderRadius: 2, background: accentFor(p.emotion), marginBottom: 12 }} />
                     <p style={{ fontSize: 11, color: 'var(--gold)', letterSpacing: '.1em', marginBottom: 12 }}>{p.fragrance}</p>
                     <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, marginBottom: 20 }}>{p.description}</p>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

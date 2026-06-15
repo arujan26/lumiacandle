@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { CANDLE_CARE, PRODUCT_DETAILS } from '../lib/products'
 import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
+import { accentFor } from '../lib/accents'
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>()
@@ -34,6 +35,7 @@ export default function ProductPage() {
   }
 
   const others = products.filter(p => p.id !== product.id)
+  const accent = accentFor(product.emotion)
 
   return (
     <>
@@ -68,8 +70,8 @@ export default function ProductPage() {
                 {product.badge && (
                   <span style={{
                     position: 'absolute', top: 20, left: 20, zIndex: 2,
-                    background: 'var(--gold)', color: 'white', fontSize: 8,
-                    letterSpacing: '.2em', textTransform: 'uppercase', padding: '6px 12px', fontWeight: 500,
+                    background: accent, color: 'var(--ink)', fontSize: 8.5,
+                    letterSpacing: '.18em', textTransform: 'uppercase', padding: '6px 12px', fontWeight: 600,
                   }}>{product.badge}</span>
                 )}
               </div>
@@ -78,7 +80,8 @@ export default function ProductPage() {
             {/* Info */}
             <div style={{ paddingTop: 8 }}>
               <span className="eyebrow" style={{ marginBottom: 12, display: 'block' }}>{product.emotion}</span>
-              <h1 style={{ fontSize: 'clamp(44px,5vw,68px)', lineHeight: .9, marginBottom: 20 }}>{product.name}</h1>
+              <h1 style={{ fontSize: 'clamp(44px,5vw,68px)', lineHeight: .9, marginBottom: 16 }}>{product.name}</h1>
+              <span style={{ display: 'block', width: 44, height: 4, borderRadius: 2, background: accent, marginBottom: 20 }} />
               <p style={{ fontSize: 12, color: 'var(--gold)', letterSpacing: '.15em', marginBottom: 24 }}>
                 {product.fragrance}
               </p>
@@ -89,7 +92,7 @@ export default function ProductPage() {
                 {product.long_description}
               </p>
               {product.for_text && (
-                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, fontStyle: 'italic', marginBottom: 40, borderLeft: '2px solid var(--champagne)', paddingLeft: 16 }}>
+                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, fontStyle: 'italic', marginBottom: 40, borderLeft: `3px solid ${accent}`, paddingLeft: 16 }}>
                   {product.for_text}
                 </p>
               )}
