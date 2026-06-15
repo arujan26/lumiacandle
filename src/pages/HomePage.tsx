@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
-import { PRODUCTS } from '../lib/products'
+import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
 
 export default function HomePage() {
+  const { products } = useProducts('candle')
   return (
     <>
       {/* Hero */}
@@ -54,7 +55,7 @@ export default function HomePage() {
             <h2>Four candles. Four feelings.</h2>
           </div>
           <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
-            {PRODUCTS.map(p => (
+            {products.map(p => (
               <Link key={p.id} to={`/shop/candles/${p.id}`} style={{ textDecoration: 'none' }}>
                 <article style={{
                   background: 'var(--ivory)', border: '1px solid var(--line)', overflow: 'hidden',

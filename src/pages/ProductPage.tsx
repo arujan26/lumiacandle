@@ -1,20 +1,28 @@
 import { useState, Fragment } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { PRODUCTS, CANDLE_CARE, PRODUCT_DETAILS } from '../lib/products'
+import { CANDLE_CARE, PRODUCT_DETAILS } from '../lib/products'
+import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>()
-  const product = PRODUCTS.find(p => p.id === id)
+  const { products, loading } = useProducts('candle')
+  const product = products.find(p => p.id === id)
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
 
   if (!product) {
     return (
       <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
-        <p className="eyebrow">404</p>
-        <h2>Candle not found</h2>
-        <Link to="/shop/candles" className="btn btn-dark">Back to Shop</Link>
+        {loading ? (
+          <span style={{ fontFamily: 'var(--serif)', fontSize: 40, color: 'var(--champagne)' }}>✦</span>
+        ) : (
+          <>
+            <p className="eyebrow">404</p>
+            <h2>Candle not found</h2>
+            <Link to="/shop/candles" className="btn btn-dark">Back to Shop</Link>
+          </>
+        )}
       </div>
     )
   }
@@ -25,7 +33,7 @@ export default function ProductPage() {
     setTimeout(() => setAdded(false), 2000)
   }
 
-  const others = PRODUCTS.filter(p => p.id !== product.id)
+  const others = products.filter(p => p.id !== product.id)
 
   return (
     <>

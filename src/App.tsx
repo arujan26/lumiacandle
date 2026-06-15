@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet, useNavigate } from 'react-router-dom'
 import './index.css'
 import Header from './components/Header'
 import CartDrawer from './components/CartDrawer'
@@ -11,6 +11,10 @@ import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminLogin from './pages/admin/AdminLogin'
+import AdminProducts from './pages/admin/AdminProducts'
+import AdminOrders from './pages/admin/AdminOrders'
 
 function Footer() {
   return (
@@ -49,7 +53,7 @@ function Footer() {
   )
 }
 
-function AppShell() {
+function StorefrontLayout() {
   const [cartOpen, setCartOpen] = useState(false)
   const navigate = useNavigate()
 
@@ -62,16 +66,7 @@ function AppShell() {
     <>
       <Header onCartOpen={() => setCartOpen(true)} />
       <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/shop/candles" element={<ShopCandlesPage />} />
-          <Route path="/shop/candles/:id" element={<ProductPage />} />
-          <Route path="/shop/stickers" element={<ShopStickersPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/order/success" element={<OrderSuccessPage />} />
-        </Routes>
+        <Outlet />
       </main>
       <Footer />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} onCheckout={handleCheckout} />
@@ -82,7 +77,26 @@ function AppShell() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppShell />
+      <Routes>
+        {/* Storefront */}
+        <Route element={<StorefrontLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/shop/candles" element={<ShopCandlesPage />} />
+          <Route path="/shop/candles/:id" element={<ProductPage />} />
+          <Route path="/shop/stickers" element={<ShopStickersPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/order/success" element={<OrderSuccessPage />} />
+        </Route>
+
+        {/* Admin */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   )
 }

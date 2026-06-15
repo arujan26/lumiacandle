@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PRODUCTS } from '../lib/products'
+import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
 
 export default function ShopCandlesPage() {
   const [hovered, setHovered] = useState<string | null>(null)
+  const { products } = useProducts('candle')
 
   return (
     <>
@@ -25,7 +26,7 @@ export default function ShopCandlesPage() {
             gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
             gap: 28,
           }}>
-            {PRODUCTS.map(p => (
+            {products.map(p => (
               <article
                 key={p.id}
                 style={{
