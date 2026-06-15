@@ -83,7 +83,7 @@ export default async (req: Request) => {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      ui_mode: 'embedded', // renders the payment form INSIDE our own page
+      ui_mode: 'embedded_page' as 'embedded', // renders the payment form INSIDE our own page (Stripe renamed 'embedded' -> 'embedded_page')
       line_items,
       // Wallets (Apple Pay / Google Pay) are shown automatically by Checkout.
       billing_address_collection: 'auto',
