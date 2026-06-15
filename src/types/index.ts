@@ -4,6 +4,7 @@ export interface Product {
   emotion: string
   fragrance: string
   description: string
+  long_description: string
   price: number
   image_url: string
   badge?: string
@@ -11,7 +12,6 @@ export interface Product {
   wax?: string
   size?: string
   for_text?: string
-  care_notes?: string
 }
 
 export interface CartItem {
@@ -35,13 +35,4 @@ export interface Order {
   subtotal: number
   status?: string
   created_at?: string
-}
-
-export interface CustomCandle {
-  size: string
-  scent: string
-  vessel: string
-  label: string
-  message?: string
-  quantity: number
 }
