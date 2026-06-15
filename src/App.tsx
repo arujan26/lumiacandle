@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { BrowserRouter, Routes, Route, Outlet, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet, useNavigate, Navigate } from 'react-router-dom'
 import './index.css'
+import { isDashboardHost } from './lib/adminBase'
 import Header from './components/Header'
 import CartDrawer from './components/CartDrawer'
 import HomePage from './pages/HomePage'
@@ -74,29 +75,48 @@ function StorefrontLayout() {
   )
 }
 
+function DashboardApp() {
+  return (
+    <Routes>
+      <Route path="/login" element={<AdminLogin />} />
+      <Route element={<AdminLayout />}>
+        <Route path="/" element={<AdminProducts />} />
+        <Route path="/orders" element={<AdminOrders />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
+}
+
+function StoreApp() {
+  return (
+    <Routes>
+      {/* Storefront */}
+      <Route element={<StorefrontLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/shop/candles" element={<ShopCandlesPage />} />
+        <Route path="/shop/candles/:id" element={<ProductPage />} />
+        <Route path="/shop/stickers" element={<ShopStickersPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/order/success" element={<OrderSuccessPage />} />
+      </Route>
+
+      {/* Admin (also reachable at /admin on the main domain / localhost) */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminProducts />} />
+        <Route path="orders" element={<AdminOrders />} />
+      </Route>
+    </Routes>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Storefront */}
-        <Route element={<StorefrontLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/shop/candles" element={<ShopCandlesPage />} />
-          <Route path="/shop/candles/:id" element={<ProductPage />} />
-          <Route path="/shop/stickers" element={<ShopStickersPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/order/success" element={<OrderSuccessPage />} />
-        </Route>
-
-        {/* Admin */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminProducts />} />
-          <Route path="orders" element={<AdminOrders />} />
-        </Route>
-      </Routes>
+      {isDashboardHost ? <DashboardApp /> : <StoreApp />}
     </BrowserRouter>
   )
 }

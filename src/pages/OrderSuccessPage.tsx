@@ -4,7 +4,11 @@ import { cart } from '../lib/cart'
 
 export default function OrderSuccessPage() {
   useEffect(() => {
-    // Payment succeeded — clear the cart.
+    // Record the paid order (pulls details from Stripe) then clear the cart.
+    const sid = new URLSearchParams(window.location.search).get('session_id')
+    if (sid) {
+      fetch(`/.netlify/functions/confirm-order?session_id=${encodeURIComponent(sid)}`).catch(() => {})
+    }
     cart.clear()
   }, [])
 
