@@ -3,11 +3,18 @@ export default function Hero() {
     <section id="hero" style={{
       position:'relative', minHeight:'100svh',
       display:'flex', alignItems:'center', overflow:'hidden',
-      background: 'linear-gradient(135deg, #2a1f16 0%, #3d2b1f 40%, #1a1410 100%)',
     }}>
+      {/* Hero background photo */}
       <div style={{
         position:'absolute', inset:0,
-        background:'linear-gradient(100deg,rgba(26,20,16,.62) 0%,rgba(26,20,16,.28) 55%,rgba(26,20,16,.05) 100%)',
+        backgroundImage:'url(/hero.jpg)',
+        backgroundSize:'cover',
+        backgroundPosition:'center 40%',
+      }}/>
+      {/* Dark overlay — left-heavy so text stays readable */}
+      <div style={{
+        position:'absolute', inset:0,
+        background:'linear-gradient(100deg,rgba(26,20,16,.72) 0%,rgba(26,20,16,.45) 50%,rgba(26,20,16,.15) 100%)',
       }}/>
 
       <div className="wrap" style={{ position:'relative', zIndex:1 }}>
