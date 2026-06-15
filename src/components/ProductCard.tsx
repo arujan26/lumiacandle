@@ -28,6 +28,7 @@ export default function ProductCard({ product, onOpenModal }: Props) {
           <img
             src={product.image_url}
             alt={product.name}
+            decoding="async"
             style={{
               position:'absolute', inset:0,
               width:'100%', height:'100%',
@@ -36,6 +37,7 @@ export default function ProductCard({ product, onOpenModal }: Props) {
               transition:'transform .6s var(--ease)',
               transform: hovered ? 'scale(1.04)' : 'scale(1)',
               display:'block',
+              imageRendering:'auto',
             }}
           />
         ) : (

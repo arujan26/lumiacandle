@@ -7,7 +7,7 @@ export default function Hero() {
       {/* Hero background photo */}
       <div style={{
         position:'absolute', inset:0,
-        backgroundImage:'url(/hero.jpg)',
+        backgroundImage:'url(/hero.webp)',
         backgroundSize:'cover',
         backgroundPosition:'center 40%',
       }}/>
