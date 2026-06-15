@@ -16,7 +16,7 @@ export default function ShopCandlesPage() {
       <div style={{ width: '100%', height: 'clamp(280px,42vh,460px)', position: 'relative', overflow: 'hidden' }}>
         <img src={settings.hero_shop_candles || '/shop-candles-hero.webp'} alt="The Lumia candle collection" style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
-          objectFit: 'cover', objectPosition: 'center 52%',
+          objectFit: 'cover', objectPosition: settings.hero_shop_candles_pos || '50% 52%',
         }} />
         <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 90, background: 'linear-gradient(180deg, rgba(251,248,242,0), var(--ivory))' }} />
       </div>
@@ -60,7 +60,7 @@ export default function ShopCandlesPage() {
                     <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '4/5', background: 'var(--cream)' }}>
                       <img src={p.image_url} alt={p.name} decoding="async" style={{
                         position: 'absolute', inset: 0, width: '100%', height: '100%',
-                        objectFit: 'cover', objectPosition: 'center center', display: 'block',
+                        objectFit: 'cover', objectPosition: p.image_position || '50% 50%', display: 'block',
                         transform: hovered === p.id ? 'scale(1.04)' : 'scale(1)',
                         transition: 'transform .6s var(--ease)',
                       }} />

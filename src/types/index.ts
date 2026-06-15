@@ -7,6 +7,7 @@ export interface Product {
   long_description: string
   price: number
   image_url: string
+  image_position?: string
   badge?: string
   burn_time?: string
   wax?: string

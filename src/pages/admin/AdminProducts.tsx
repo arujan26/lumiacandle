@@ -4,6 +4,7 @@ import {
   uploadProductImage, emptyProduct,
   type DbProduct, type ProductType,
 } from '../../lib/productsApi'
+import ImageFramePicker from '../../components/ImageFramePicker'
 
 function slugify(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
@@ -86,7 +87,7 @@ function Section({ title, items, onAdd, onEdit, onChanged }: {
             <div key={p.id} style={{ border: '1px solid var(--line)', background: 'var(--white)', opacity: p.active ? 1 : 0.55 }}>
               <div style={{ aspectRatio: '4/5', background: 'var(--cream)', position: 'relative', overflow: 'hidden' }}>
                 {p.image_url
-                  ? <img src={p.image_url} alt={p.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ? <img src={p.image_url} alt={p.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: p.image_position || '50% 50%' }} />
                   : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--champagne)', fontFamily: 'var(--serif)', fontSize: 40 }}>✦</div>}
                 {!p.active && <span style={{ position: 'absolute', top: 10, left: 10, background: 'var(--ink)', color: 'white', fontSize: 8, letterSpacing: '.15em', padding: '4px 8px', textTransform: 'uppercase' }}>Hidden</span>}
               </div>
@@ -122,13 +123,10 @@ function ProductEditor({ product, isNew, onClose, onSaved }: {
 
   const set = (k: keyof DbProduct, v: unknown) => setP(prev => ({ ...prev, [k]: v }))
 
-  const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const handleImageFile = async (file: File) => {
     setUploading(true); setError('')
     try {
-      const url = await uploadProductImage(file)
-      set('image_url', url)
+      set('image_url', await uploadProductImage(file))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed')
     } finally { setUploading(false) }
@@ -152,21 +150,18 @@ function ProductEditor({ product, isNew, onClose, onSaved }: {
           <button onClick={onClose} style={{ ...btnSm, border: 'none', fontSize: 18 }}>✕</button>
         </div>
 
-        {/* Image */}
-        <div style={{ display: 'flex', gap: 16, marginBottom: 20, alignItems: 'flex-start' }}>
-          <div style={{ width: 110, height: 138, flexShrink: 0, background: 'var(--cream)', position: 'relative', overflow: 'hidden', border: '1px solid var(--line)' }}>
-            {p.image_url
-              ? <img src={p.image_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-              : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--champagne)', fontFamily: 'var(--serif)', fontSize: 30 }}>✦</div>}
-          </div>
-          <div>
-            <label style={{ ...btnSm, display: 'inline-block' }}>
-              {uploading ? 'Uploading…' : 'Upload photo'}
-              <input type="file" accept="image/*" onChange={handleImage} style={{ display: 'none' }} disabled={uploading} />
-            </label>
-            <p style={{ fontSize: 11, color: 'var(--muted)', marginTop: 8, lineHeight: 1.5 }}>JPG, PNG or WebP.<br />Best ratio 4:5 (e.g. 1122×1402).</p>
-          </div>
-        </div>
+        {/* Photo with framing */}
+        <ImageFramePicker
+          label="Product photo"
+          url={p.image_url || ''}
+          position={p.image_position || '50% 50%'}
+          onPosition={pos => set('image_position', pos)}
+          onUpload={handleImageFile}
+          onRemove={() => set('image_url', '')}
+          uploading={uploading}
+          recommend="Portrait 4:5 — ideal 1200 × 1500 px. Looks identical on mobile & desktop. JPG, PNG or WebP."
+          desktopAspect="4 / 5"
+        />
 
         <Field label="Name"><input style={inp} value={p.name} onChange={e => set('name', e.target.value)} /></Field>
         {isNew && <Field label="Slug / ID (URL)"><input style={inp} value={p.id} placeholder={slugify(p.name) || 'auto from name'} onChange={e => set('id', e.target.value)} /></Field>}

@@ -16,6 +16,7 @@ export interface DbProduct {
   for_text: string | null
   price: number
   image_url: string | null
+  image_position: string | null
   badge: string | null
   burn_time: string | null
   wax: string | null
@@ -34,6 +35,7 @@ function rowToProduct(r: DbProduct): Product {
     long_description: r.long_description ?? '',
     price: Number(r.price),
     image_url: r.image_url ?? '',
+    image_position: r.image_position || '50% 50%',
     badge: r.badge ?? undefined,
     burn_time: r.burn_time ?? undefined,
     wax: r.wax ?? undefined,
@@ -99,6 +101,7 @@ export async function adminUpsertProduct(p: DbProduct): Promise<{ error: string 
     for_text: p.for_text,
     price: p.price,
     image_url: p.image_url,
+    image_position: p.image_position,
     badge: p.badge,
     burn_time: p.burn_time,
     wax: p.wax,
@@ -139,6 +142,7 @@ export function emptyProduct(type: ProductType): DbProduct {
     for_text: '',
     price: 35,
     image_url: '',
+    image_position: '50% 50%',
     badge: '',
     burn_time: type === 'candle' ? '35–45 hrs' : '',
     wax: type === 'candle' ? 'Coconut-Soy Wax Blend' : '',

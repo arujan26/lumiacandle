@@ -65,7 +65,7 @@ export default function ProductPage() {
               <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '4/5', background: 'var(--cream)' }}>
                 <img src={product.image_url} alt={product.name} decoding="async" style={{
                   position: 'absolute', inset: 0, width: '100%', height: '100%',
-                  objectFit: 'cover', objectPosition: 'center center', display: 'block',
+                  objectFit: 'cover', objectPosition: product.image_position || '50% 50%', display: 'block',
                 }} />
                 {product.badge && (
                   <span style={{
@@ -172,7 +172,7 @@ export default function ProductPage() {
                   <div style={{ aspectRatio: '4/5', overflow: 'hidden', position: 'relative' }}>
                     <img src={p.image_url} alt={p.name} decoding="async" style={{
                       position: 'absolute', inset: 0, width: '100%', height: '100%',
-                      objectFit: 'cover', objectPosition: 'center center', display: 'block',
+                      objectFit: 'cover', objectPosition: p.image_position || '50% 50%', display: 'block',
                     }} />
                   </div>
                   <div style={{ padding: 20 }}>

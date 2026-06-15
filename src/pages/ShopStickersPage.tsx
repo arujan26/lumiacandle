@@ -25,7 +25,7 @@ export default function ShopStickersPage() {
       <div style={{ width: '100%', height: 'clamp(300px,46vh,500px)', position: 'relative', overflow: 'hidden' }}>
         <img src={settings.hero_shop_stickers || '/shop-stickers-hero.webp'} alt="Lumia sticker collections" style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
-          objectFit: 'cover', objectPosition: 'center 42%',
+          objectFit: 'cover', objectPosition: settings.hero_shop_stickers_pos || '50% 42%',
         }} />
         <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 90, background: 'linear-gradient(180deg, rgba(245,237,224,0), var(--cream))' }} />
       </div>
@@ -62,7 +62,7 @@ export default function ShopStickersPage() {
                   onMouseEnter={() => setHovered(p.id)} onMouseLeave={() => setHovered(null)}>
                   <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '4/5', background: 'var(--cream)' }}>
                     {p.image_url
-                      ? <img src={p.image_url} alt={p.name} decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ? <img src={p.image_url} alt={p.name} decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: p.image_position || '50% 50%' }} />
                       : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--champagne)', fontFamily: 'var(--serif)', fontSize: 48 }}>✦</div>}
                   </div>
                   <div style={{ padding: 26, display: 'flex', flexDirection: 'column', flex: 1 }}>

@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { adminLoadSettings, adminSaveSettings, type Settings } from '../../lib/settings'
 import { uploadProductImage } from '../../lib/productsApi'
+import ImageFramePicker from '../../components/ImageFramePicker'
 
-const HEROES: { key: string; label: string }[] = [
-  { key: 'hero_home', label: 'Home — hero background' },
-  { key: 'hero_shop_candles', label: 'Shop Candles — banner' },
-  { key: 'hero_shop_stickers', label: 'Shop Stickers — banner' },
-  { key: 'hero_about', label: 'About — image (optional)' },
-  { key: 'hero_contact', label: 'Contact — image (optional)' },
+interface HeroCfg { key: string; label: string; recommend: string; desktop: string; mobile: string }
+const HEROES: HeroCfg[] = [
+  { key: 'hero_home', label: 'Home — full-screen hero', recommend: 'Landscape — ideal 2000 × 1300 px. Fills the whole screen; keep the subject centered so it survives the mobile crop.', desktop: '16 / 9', mobile: '9 / 16' },
+  { key: 'hero_shop_candles', label: 'Shop Candles — top banner', recommend: 'Landscape — ideal 1600 × 1100 px. Wide on desktop, a bit taller on mobile.', desktop: '16 / 6', mobile: '4 / 3' },
+  { key: 'hero_shop_stickers', label: 'Shop Stickers — top banner', recommend: 'Landscape — ideal 1600 × 1100 px. Wide on desktop, a bit taller on mobile.', desktop: '16 / 6', mobile: '4 / 3' },
+  { key: 'hero_about', label: 'About — image (optional)', recommend: 'Landscape — ideal 1600 × 900 px. Optional.', desktop: '16 / 7', mobile: '4 / 3' },
+  { key: 'hero_contact', label: 'Contact — image (optional)', recommend: 'Landscape — ideal 1600 × 900 px. Optional.', desktop: '16 / 7', mobile: '4 / 3' },
 ]
 
 export default function AdminSettings() {
@@ -47,18 +49,23 @@ export default function AdminSettings() {
 
       {/* Hero images */}
       <Section title="Hero photos">
+        <p style={{ fontSize: 12.5, color: 'var(--muted)', marginBottom: 16, lineHeight: 1.6 }}>
+          Upload a photo, then drag the <strong>Horizontal / Vertical</strong> sliders to frame it. The previews show <strong>exactly</strong> how it crops on desktop and mobile — what you see is what goes live.
+        </p>
         {HEROES.map(h => (
-          <div key={h.key} style={{ display: 'flex', gap: 16, alignItems: 'center', padding: '14px 0', borderBottom: '1px solid var(--line)' }}>
-            <div style={{ width: 96, height: 60, flexShrink: 0, background: 'var(--cream)', border: '1px solid var(--line)', backgroundImage: s[h.key] ? `url(${s[h.key]})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 13, color: 'var(--ink)', marginBottom: 6, fontWeight: 500 }}>{h.label}</div>
-              <label style={{ ...pill, display: 'inline-block' }}>
-                {uploading === h.key ? 'Uploading…' : 'Upload photo'}
-                <input type="file" accept="image/*" style={{ display: 'none' }} disabled={!!uploading} onChange={e => upload(h.key, e.target.files?.[0])} />
-              </label>
-              {s[h.key] && <button onClick={() => set(h.key, '')} style={{ ...pill, marginLeft: 8, color: '#c04a3a' }}>Remove</button>}
-            </div>
-          </div>
+          <ImageFramePicker
+            key={h.key}
+            label={h.label}
+            url={s[h.key] || ''}
+            position={s[`${h.key}_pos`] || '50% 50%'}
+            onPosition={pos => set(`${h.key}_pos`, pos)}
+            onUpload={f => upload(h.key, f)}
+            onRemove={() => { set(h.key, ''); set(`${h.key}_pos`, '50% 50%') }}
+            uploading={uploading === h.key}
+            recommend={h.recommend}
+            desktopAspect={h.desktop}
+            mobileAspect={h.mobile}
+          />
         ))}
       </Section>
 
@@ -107,8 +114,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 const inp: React.CSSProperties = {
   width: '100%', padding: '11px 13px', border: '1px solid var(--line)',
   background: 'var(--ivory)', fontSize: 14, color: 'var(--ink)', outline: 'none', borderRadius: 0, fontFamily: 'var(--sans)',
-}
-const pill: React.CSSProperties = {
-  fontSize: 10, letterSpacing: '.1em', textTransform: 'uppercase', padding: '7px 12px',
-  border: '1px solid var(--line)', background: 'transparent', cursor: 'pointer', color: 'var(--ink)',
 }

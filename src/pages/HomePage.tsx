@@ -17,7 +17,7 @@ export default function HomePage() {
         <div style={{
           position: 'absolute', inset: 0,
           backgroundImage: `url(${settings.hero_home || '/hero.webp'})`,
-          backgroundSize: 'cover', backgroundPosition: 'center 40%',
+          backgroundSize: 'cover', backgroundPosition: settings.hero_home_pos || '50% 40%',
         }} />
         <div style={{
           position: 'absolute', inset: 0,
@@ -70,7 +70,7 @@ export default function HomePage() {
                   <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '4/5' }}>
                     <img src={p.image_url} alt={p.name} decoding="async" style={{
                       position: 'absolute', inset: 0, width: '100%', height: '100%',
-                      objectFit: 'cover', objectPosition: 'center center', display: 'block',
+                      objectFit: 'cover', objectPosition: p.image_position || '50% 50%', display: 'block',
                     }} />
                     {p.badge && (
                       <span style={{
