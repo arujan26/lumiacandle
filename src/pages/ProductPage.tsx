@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { PRODUCTS, CANDLE_CARE, PRODUCT_DETAILS } from '../lib/products'
 import { cart } from '../lib/cart'
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
   const product = PRODUCTS.find(p => p.id === id)
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
