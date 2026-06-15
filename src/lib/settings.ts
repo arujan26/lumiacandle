@@ -3,6 +3,8 @@ import { supabase } from './supabase'
 
 export type Settings = Record<string, string>
 
+const HERO_KEYS = ['hero_home', 'hero_shop_candles', 'hero_shop_stickers', 'hero_about', 'hero_contact']
+
 const DEFAULTS: Settings = {
   hero_home: '/hero.webp',
   hero_shop_candles: '/shop-candles-hero.webp',
@@ -14,6 +16,12 @@ const DEFAULTS: Settings = {
   contact_email: 'contact@lumiacandle.com',
   instagram: 'https://instagram.com/lumiacandles',
   tiktok: 'https://tiktok.com/@lumiacandles',
+  // desktop positions + optional separate mobile image/position per hero
+  ...Object.fromEntries(HERO_KEYS.flatMap(k => [
+    [`${k}_pos`, '50% 50%'],
+    [`${k}_mobile`, ''],
+    [`${k}_mobile_pos`, '50% 50%'],
+  ])),
 }
 
 let _cache: Settings | null = null
@@ -48,6 +56,25 @@ export async function adminLoadSettings(): Promise<Settings> {
   const m: Settings = { ...DEFAULTS }
   for (const r of (data || []) as { key: string; value: string | null }[]) m[r.key] = r.value ?? ''
   return m
+}
+
+/** True on phone-width screens (live-updates on resize). */
+export function useIsMobile(breakpoint = 768): boolean {
+  const [m, setM] = useState(typeof window !== 'undefined' && window.innerWidth <= breakpoint)
+  useEffect(() => {
+    const on = () => setM(window.innerWidth <= breakpoint)
+    window.addEventListener('resize', on, { passive: true })
+    return () => window.removeEventListener('resize', on)
+  }, [breakpoint])
+  return m
+}
+
+/** Resolves the right hero image + position for the current device. */
+export function heroImage(s: Settings, key: string, isMobile: boolean): { url: string; pos: string } {
+  if (isMobile && s[`${key}_mobile`]) {
+    return { url: s[`${key}_mobile`], pos: s[`${key}_mobile_pos`] || '50% 50%' }
+  }
+  return { url: s[key] || '', pos: s[`${key}_pos`] || '50% 50%' }
 }
 
 export async function adminSaveSettings(entries: Settings): Promise<{ error: string | null }> {

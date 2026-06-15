@@ -93,7 +93,10 @@ function Section({ title, items, onAdd, onEdit, onChanged }: {
               </div>
               <div style={{ padding: 14 }}>
                 <div style={{ fontFamily: 'var(--serif)', fontSize: 19, marginBottom: 2 }}>{p.name || '(no name)'}</div>
-                <div style={{ fontSize: 13, color: 'var(--gold)', marginBottom: 12 }}>${Number(p.price)}</div>
+                <div style={{ fontSize: 13, color: 'var(--gold)', marginBottom: 8 }}>${Number(p.price)}</div>
+                <div style={{ fontSize: 11, marginBottom: 12, color: p.stock_qty === 0 ? '#c04a3a' : 'var(--muted)' }}>
+                  {p.stock_qty == null ? 'In stock · unlimited' : p.stock_qty === 0 ? '● Sold out' : `${p.stock_qty} in stock`}
+                </div>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                   <button onClick={() => onEdit(p)} style={btnSm}>Edit</button>
                   <button onClick={() => toggleActive(p)} style={btnSm}>{p.active ? 'Hide' : 'Show'}</button>
@@ -185,8 +188,11 @@ function ProductEditor({ product, isNew, onClose, onSaved }: {
             <Field label="Size"><input style={inp} value={p.size ?? ''} onChange={e => set('size', e.target.value)} /></Field>
           </div>
         )}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
           <Field label="Sort order"><input style={inp} type="number" value={p.sort_order} onChange={e => set('sort_order', Number(e.target.value))} /></Field>
+          <Field label="Stock (empty = unlimited)">
+            <input style={inp} type="number" min={0} placeholder="∞" value={p.stock_qty ?? ''} onChange={e => set('stock_qty', e.target.value === '' ? null : Math.max(0, Number(e.target.value)))} />
+          </Field>
           <Field label="Visible on store">
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, paddingTop: 10 }}>
               <input type="checkbox" checked={p.active} onChange={e => set('active', e.target.checked)} /> {p.active ? 'Visible' : 'Hidden'}

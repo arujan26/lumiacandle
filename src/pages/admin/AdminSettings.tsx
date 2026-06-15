@@ -3,13 +3,13 @@ import { adminLoadSettings, adminSaveSettings, type Settings } from '../../lib/s
 import { uploadProductImage } from '../../lib/productsApi'
 import ImageFramePicker from '../../components/ImageFramePicker'
 
-interface HeroCfg { key: string; label: string; recommend: string; desktop: string; mobile: string }
+interface HeroCfg { key: string; label: string; desktop: string; mobile: string; recD: string; recM: string }
 const HEROES: HeroCfg[] = [
-  { key: 'hero_home', label: 'Home — full-screen hero', recommend: 'Landscape — ideal 2000 × 1300 px. Fills the whole screen; keep the subject centered so it survives the mobile crop.', desktop: '16 / 9', mobile: '9 / 16' },
-  { key: 'hero_shop_candles', label: 'Shop Candles — top banner', recommend: 'Landscape — ideal 1600 × 1100 px. Wide on desktop, a bit taller on mobile.', desktop: '16 / 6', mobile: '4 / 3' },
-  { key: 'hero_shop_stickers', label: 'Shop Stickers — top banner', recommend: 'Landscape — ideal 1600 × 1100 px. Wide on desktop, a bit taller on mobile.', desktop: '16 / 6', mobile: '4 / 3' },
-  { key: 'hero_about', label: 'About — image (optional)', recommend: 'Landscape — ideal 1600 × 900 px. Optional.', desktop: '16 / 7', mobile: '4 / 3' },
-  { key: 'hero_contact', label: 'Contact — image (optional)', recommend: 'Landscape — ideal 1600 × 900 px. Optional.', desktop: '16 / 7', mobile: '4 / 3' },
+  { key: 'hero_home', label: 'Home — full-screen hero', desktop: '16 / 9', mobile: '9 / 16', recD: 'Landscape — ideal 2000 × 1300 px.', recM: 'Portrait — ideal 1080 × 1920 px (tall, for phones).' },
+  { key: 'hero_shop_candles', label: 'Shop Candles — top banner', desktop: '16 / 6', mobile: '4 / 3', recD: 'Wide — ideal 1600 × 1100 px.', recM: 'Ideal 1200 × 900 px.' },
+  { key: 'hero_shop_stickers', label: 'Shop Stickers — top banner', desktop: '16 / 6', mobile: '4 / 3', recD: 'Wide — ideal 1600 × 1100 px.', recM: 'Ideal 1200 × 900 px.' },
+  { key: 'hero_about', label: 'About — image (optional)', desktop: '16 / 7', mobile: '4 / 3', recD: 'Wide — ideal 1600 × 900 px.', recM: 'Ideal 1200 × 900 px.' },
+  { key: 'hero_contact', label: 'Contact — image (optional)', desktop: '16 / 7', mobile: '4 / 3', recD: 'Wide — ideal 1600 × 900 px.', recM: 'Ideal 1200 × 900 px.' },
 ]
 
 export default function AdminSettings() {
@@ -53,19 +53,33 @@ export default function AdminSettings() {
           Upload a photo, then drag the <strong>Horizontal / Vertical</strong> sliders to frame it. The previews show <strong>exactly</strong> how it crops on desktop and mobile — what you see is what goes live.
         </p>
         {HEROES.map(h => (
-          <ImageFramePicker
-            key={h.key}
-            label={h.label}
-            url={s[h.key] || ''}
-            position={s[`${h.key}_pos`] || '50% 50%'}
-            onPosition={pos => set(`${h.key}_pos`, pos)}
-            onUpload={f => upload(h.key, f)}
-            onRemove={() => { set(h.key, ''); set(`${h.key}_pos`, '50% 50%') }}
-            uploading={uploading === h.key}
-            recommend={h.recommend}
-            desktopAspect={h.desktop}
-            mobileAspect={h.mobile}
-          />
+          <div key={h.key} style={{ marginBottom: 26, paddingBottom: 18, borderBottom: '1px solid var(--line)' }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', marginBottom: 12 }}>{h.label}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
+              <ImageFramePicker
+                label="💻 Desktop"
+                url={s[h.key] || ''}
+                position={s[`${h.key}_pos`] || '50% 50%'}
+                onPosition={pos => set(`${h.key}_pos`, pos)}
+                onUpload={f => upload(h.key, f)}
+                onRemove={() => { set(h.key, ''); set(`${h.key}_pos`, '50% 50%') }}
+                uploading={uploading === h.key}
+                recommend={h.recD}
+                desktopAspect={h.desktop}
+              />
+              <ImageFramePicker
+                label="📱 Mobile (optional)"
+                url={s[`${h.key}_mobile`] || ''}
+                position={s[`${h.key}_mobile_pos`] || '50% 50%'}
+                onPosition={pos => set(`${h.key}_mobile_pos`, pos)}
+                onUpload={f => upload(`${h.key}_mobile`, f)}
+                onRemove={() => { set(`${h.key}_mobile`, ''); set(`${h.key}_mobile_pos`, '50% 50%') }}
+                uploading={uploading === `${h.key}_mobile`}
+                recommend={`${h.recM} Leave empty to reuse the desktop photo.`}
+                desktopAspect={h.mobile}
+              />
+            </div>
+          </div>
         ))}
       </Section>
 

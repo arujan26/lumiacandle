@@ -112,9 +112,10 @@ export default function ProductPage() {
                 </div>
                 <button
                   className="btn btn-dark"
-                  style={{ flex: 1, fontSize: 10, letterSpacing: '.2em' }}
+                  style={{ flex: 1, fontSize: 10, letterSpacing: '.2em', opacity: product.stock_qty === 0 ? .45 : 1 }}
+                  disabled={product.stock_qty === 0}
                   onClick={handleAdd}>
-                  {added ? '✓ Added' : 'Add to Cart'}
+                  {product.stock_qty === 0 ? 'Sold out' : added ? '✓ Added' : 'Add to Cart'}
                 </button>
               </div>
 

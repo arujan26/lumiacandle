@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom'
 import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
 import { accentFor } from '../lib/accents'
-import { useSettings } from '../lib/settings'
+import { useSettings, useIsMobile, heroImage } from '../lib/settings'
 
 export default function HomePage() {
   const { products } = useProducts('candle')
   const settings = useSettings()
+  const hero = heroImage(settings, 'hero_home', useIsMobile())
   return (
     <>
       {/* Hero */}
@@ -16,8 +17,8 @@ export default function HomePage() {
       }}>
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: `url(${settings.hero_home || '/hero.webp'})`,
-          backgroundSize: 'cover', backgroundPosition: settings.hero_home_pos || '50% 40%',
+          backgroundImage: `url(${hero.url || '/hero.webp'})`,
+          backgroundSize: 'cover', backgroundPosition: hero.pos,
         }} />
         <div style={{
           position: 'absolute', inset: 0,
@@ -87,9 +88,9 @@ export default function HomePage() {
                     <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, marginBottom: 20 }}>{p.description}</p>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: 'var(--serif)', fontSize: 20 }}>${p.price}</span>
-                      <button className="btn btn-dark" style={{ padding: '10px 16px', fontSize: 9 }}
+                      <button className="btn btn-dark" style={{ padding: '10px 16px', fontSize: 9, opacity: p.stock_qty === 0 ? .45 : 1 }} disabled={p.stock_qty === 0}
                         onClick={e => { e.preventDefault(); cart.add(p) }}>
-                        Add to Cart
+                        {p.stock_qty === 0 ? 'Sold out' : 'Add to Cart'}
                       </button>
                     </div>
                   </div>

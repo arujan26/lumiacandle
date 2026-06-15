@@ -2,13 +2,14 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
-import { useSettings } from '../lib/settings'
+import { useSettings, useIsMobile, heroImage } from '../lib/settings'
 
 const FEATURES = ['Waterproof', 'Durable vinyl', 'Perfect for laptops, journals, water bottles & iPads']
 
 export default function ShopStickersPage() {
   const { products } = useProducts('sticker')
   const settings = useSettings()
+  const hero = heroImage(settings, 'hero_shop_stickers', useIsMobile())
   const [hovered, setHovered] = useState<string | null>(null)
   const [added, setAdded] = useState<string | null>(null)
   const hasStickers = products.length > 0
@@ -23,9 +24,9 @@ export default function ShopStickersPage() {
     <>
       {/* Image banner */}
       <div style={{ width: '100%', height: 'clamp(300px,46vh,500px)', position: 'relative', overflow: 'hidden' }}>
-        <img src={settings.hero_shop_stickers || '/shop-stickers-hero.webp'} alt="Lumia sticker collections" style={{
+        <img src={hero.url || '/shop-stickers-hero.webp'} alt="Lumia sticker collections" style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
-          objectFit: 'cover', objectPosition: settings.hero_shop_stickers_pos || '50% 42%',
+          objectFit: 'cover', objectPosition: hero.pos,
         }} />
         <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 90, background: 'linear-gradient(180deg, rgba(245,237,224,0), var(--cream))' }} />
       </div>
@@ -78,8 +79,8 @@ export default function ShopStickersPage() {
                     </ul>
                     <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: 'var(--serif)', fontSize: 24 }}>${p.price.toFixed(2)}</span>
-                      <button className="btn btn-dark" style={{ padding: '11px 18px', fontSize: 9 }} onClick={() => add(p)}>
-                        {added === p.id ? '✓ Added' : 'Add to Cart'}
+                      <button className="btn btn-dark" style={{ padding: '11px 18px', fontSize: 9, opacity: p.stock_qty === 0 ? .45 : 1 }} disabled={p.stock_qty === 0} onClick={() => add(p)}>
+                        {p.stock_qty === 0 ? 'Sold out' : added === p.id ? '✓ Added' : 'Add to Cart'}
                       </button>
                     </div>
                   </div>

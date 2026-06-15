@@ -15,6 +15,7 @@ import CheckoutPage from './pages/CheckoutPage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminLogin from './pages/admin/AdminLogin'
+import AdminOverview from './pages/admin/AdminOverview'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminMessages from './pages/admin/AdminMessages'
@@ -88,7 +89,8 @@ function DashboardApp() {
     <Routes>
       <Route path="/login" element={<AdminLogin />} />
       <Route element={<AdminLayout />}>
-        <Route path="/" element={<AdminProducts />} />
+        <Route path="/" element={<AdminOverview />} />
+        <Route path="/products" element={<AdminProducts />} />
         <Route path="/orders" element={<AdminOrders />} />
         <Route path="/messages" element={<AdminMessages />} />
         <Route path="/settings" element={<AdminSettings />} />
@@ -116,7 +118,8 @@ function StoreApp() {
       {/* Admin (also reachable at /admin on the main domain / localhost) */}
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminProducts />} />
+        <Route index element={<AdminOverview />} />
+        <Route path="products" element={<AdminProducts />} />
         <Route path="orders" element={<AdminOrders />} />
         <Route path="messages" element={<AdminMessages />} />
         <Route path="settings" element={<AdminSettings />} />

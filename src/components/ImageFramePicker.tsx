@@ -34,7 +34,7 @@ function Frame({ url, pos, aspect, tag, w }: { url: string; pos: string; aspect:
           <span style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 1, background: 'rgba(255,255,255,.35)' }} />
         </>}
       </div>
-      <span style={{ fontSize: 9, letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--muted-light)', display: 'block', marginTop: 6 }}>{tag}</span>
+      {tag && <span style={{ fontSize: 9, letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--muted-light)', display: 'block', marginTop: 6 }}>{tag}</span>}
     </div>
   )
 }
@@ -50,7 +50,7 @@ export default function ImageFramePicker({ label, url, position, onPosition, onU
 
       {/* Live previews (exactly how it crops) */}
       <div style={{ display: 'flex', gap: 22, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center', marginBottom: url ? 14 : 4 }}>
-        <Frame url={url} pos={position} aspect={desktopAspect} tag="Desktop" w={mobileAspect ? 240 : 200} />
+        <Frame url={url} pos={position} aspect={desktopAspect} tag={mobileAspect ? 'Desktop' : ''} w={mobileAspect ? 240 : 220} />
         {mobileAspect && <Frame url={url} pos={position} aspect={mobileAspect} tag="Mobile" w={120} />}
       </div>
 

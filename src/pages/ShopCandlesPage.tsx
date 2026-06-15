@@ -3,20 +3,21 @@ import { Link } from 'react-router-dom'
 import { useProducts } from '../lib/productsApi'
 import { cart } from '../lib/cart'
 import { accentFor, EMOTION_PASTELS } from '../lib/accents'
-import { useSettings } from '../lib/settings'
+import { useSettings, useIsMobile, heroImage } from '../lib/settings'
 
 export default function ShopCandlesPage() {
   const [hovered, setHovered] = useState<string | null>(null)
   const { products } = useProducts('candle')
   const settings = useSettings()
+  const hero = heroImage(settings, 'hero_shop_candles', useIsMobile())
 
   return (
     <>
       {/* Image banner */}
       <div style={{ width: '100%', height: 'clamp(280px,42vh,460px)', position: 'relative', overflow: 'hidden' }}>
-        <img src={settings.hero_shop_candles || '/shop-candles-hero.webp'} alt="The Lumia candle collection" style={{
+        <img src={hero.url || '/shop-candles-hero.webp'} alt="The Lumia candle collection" style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
-          objectFit: 'cover', objectPosition: settings.hero_shop_candles_pos || '50% 52%',
+          objectFit: 'cover', objectPosition: hero.pos,
         }} />
         <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 90, background: 'linear-gradient(180deg, rgba(251,248,242,0), var(--ivory))' }} />
       </div>
@@ -81,8 +82,8 @@ export default function ShopCandlesPage() {
                   </Link>
                   <div style={{ padding: '20px 28px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: 'var(--serif)', fontSize: 23 }}>${p.price}</span>
-                    <button className="btn btn-dark" style={{ padding: '11px 20px', fontSize: 9 }} onClick={() => cart.add(p)}>
-                      Add to Cart
+                    <button className="btn btn-dark" style={{ padding: '11px 20px', fontSize: 9, opacity: p.stock_qty === 0 ? .45 : 1 }} disabled={p.stock_qty === 0} onClick={() => cart.add(p)}>
+                      {p.stock_qty === 0 ? 'Sold out' : 'Add to Cart'}
                     </button>
                   </div>
                 </article>

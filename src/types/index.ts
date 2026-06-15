@@ -8,6 +8,7 @@ export interface Product {
   price: number
   image_url: string
   image_position?: string
+  stock_qty?: number | null
   badge?: string
   burn_time?: string
   wax?: string
