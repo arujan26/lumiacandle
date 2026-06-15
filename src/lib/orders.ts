@@ -24,7 +24,7 @@ export async function submitOrder(order: Order): Promise<{ error: string | null 
     status: 'pending',
   }
 
-  const { error } = await supabase.from('orders').insert(payload)
+  const { error } = await supabase.from('lumia_orders').insert(payload)
 
   if (error) {
     console.error('Order submission error:', error)

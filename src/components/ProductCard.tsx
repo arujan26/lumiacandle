@@ -34,7 +34,7 @@ export default function ProductCard({ product, onOpenModal }: Props) {
     >
       <div style={{ position:'relative', overflow:'hidden', aspectRatio:'4/5' }}>
         <div style={{
-          width:'100%', height:'100%', backgroundSize:'cover', backgroundPosition:'center',
+          width:'100%', height:'100%', backgroundSize:'cover', backgroundPosition:'center 55%',
           transition:'transform .6s var(--ease)',
           display:'flex', alignItems:'center', justifyContent:'center',
           ...imgStyle,

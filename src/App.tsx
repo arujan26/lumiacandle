@@ -11,14 +11,14 @@ import type { Product } from './types'
 
 const EMOTIONS = [
   { label: 'I need to let go', sub: 'Release · Strawberry Guava & Coconut Lime', idx: 0 },
-  { label: 'I need clarity', sub: 'Clarity · Sea Salt Orchid & Magnolia Peony', idx: 1 },
+  { label: 'I need to feel safe', sub: 'Safety · Sea Salt · Orchid & Magnolia Peony', idx: 1 },
   { label: 'I need a fresh start', sub: 'Renewal · Lemongrass Lime & Garden Mint', idx: 2 },
   { label: 'I need to feel enough', sub: 'Self-Worth · Papaya Paradise & Mango', idx: 3 },
 ]
 
 const REVIEWS = [
   { text: '"Let Go changed my entire evening ritual. I light it after hard days and it genuinely helps me release."', author: 'Sofia M. — Miami, FL', stars: 5 },
-  { text: '"I Am Sage is the most beautiful scent I\'ve ever experienced. It smells like clarity feels."', author: 'Kezia A. — Brooklyn, NY', stars: 5 },
+  { text: '"I\'m Safe is the most grounding scent I\'ve ever experienced. It smells like calm feels."', author: 'Kezia A. — Brooklyn, NY', stars: 5 },
   { text: '"New Beginning got me through my divorce. Sounds dramatic but it\'s true. Every first morning with that candle."', author: 'Rachel T. — Austin, TX', stars: 5 },
 ]
 
