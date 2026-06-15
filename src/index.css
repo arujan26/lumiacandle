@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
 
 :root {
   --ivory: #fbf8f2;
@@ -13,7 +13,7 @@
   --muted-light: #a89888;
   --white: #fffdf8;
   --line: rgba(90,65,45,.12);
-  --serif: 'Cormorant Garamond', Georgia, serif;
+  --serif: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
   --sans: 'Jost', system-ui, sans-serif;
   --ease: cubic-bezier(.22,1,.36,1);
   --wrap: min(1200px, calc(100vw - 40px));
@@ -46,6 +46,35 @@ p { line-height: 1.75; color: var(--muted); font-size: 15px; font-weight: 300; }
 .btn-ghost:hover { background: var(--white); transform: translateY(-2px); }
 
 #root { min-height: 100svh; }
+
+/* ===== Header layout ===== */
+.header-inner {
+  width: var(--wrap);
+  margin: 0 auto;
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+/* Premium nav links with animated underline */
+header nav a {
+  position: relative;
+  padding: 4px 0;
+  white-space: nowrap;
+}
+header nav a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .4s var(--ease);
+  opacity: .7;
+}
+header nav a:hover::after { transform: scaleX(1); transform-origin: left; }
 
 @keyframes scrollPulse { 0%,100% { opacity:.35; transform:scaleY(1); } 50% { opacity:.7; transform:scaleY(1.15); } }
 @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }

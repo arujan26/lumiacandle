@@ -32,17 +32,17 @@ export default function Header({ onCartOpen }: HeaderProps) {
     { to: '/contact', label: 'Contact' },
   ]
 
-  const headerBg = isHome && !scrolled
-    ? 'rgba(26,20,16,0)'
+  const onHero = isHome && !scrolled
+  // Subtle top-down shade over the hero so light nav text stays readable
+  const headerBg = onHero
+    ? 'linear-gradient(180deg, rgba(18,13,10,.55) 0%, rgba(18,13,10,.18) 55%, rgba(18,13,10,0) 100%)'
     : 'rgba(251,248,242,.96)'
-  const navColor = isHome && !scrolled
-    ? 'rgba(255,253,248,.7)'
-    : 'var(--muted)'
-  const logoColor = isHome && !scrolled ? 'var(--white)' : 'var(--ink)'
-  const borderColor = isHome && !scrolled ? 'rgba(255,253,248,.12)' : 'var(--line)'
-  const cartColor = isHome && !scrolled ? 'rgba(255,253,248,.85)' : 'var(--ink)'
-  const cartBorder = isHome && !scrolled ? 'rgba(255,253,248,.3)' : 'var(--line)'
-  const hamColor = isHome && !scrolled ? 'var(--white)' : 'var(--ink)'
+  const navColor = onHero ? 'rgba(255,253,248,.92)' : 'var(--muted)'
+  const logoColor = onHero ? 'var(--white)' : 'var(--ink)'
+  const borderColor = onHero ? 'rgba(255,253,248,.18)' : 'var(--line)'
+  const cartColor = onHero ? 'var(--white)' : 'var(--ink)'
+  const cartBorder = onHero ? 'rgba(255,253,248,.4)' : 'var(--line)'
+  const hamColor = onHero ? 'var(--white)' : 'var(--ink)'
 
   return (
     <>

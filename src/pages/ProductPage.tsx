@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, Fragment } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { PRODUCTS, CANDLE_CARE, PRODUCT_DETAILS } from '../lib/products'
 import { cart } from '../lib/cart'
@@ -114,10 +114,10 @@ export default function ProductPage() {
                 </h4>
                 <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '12px 32px' }}>
                   {PRODUCT_DETAILS.map(d => (
-                    <>
-                      <dt key={`${d.label}-dt`} style={{ fontSize: 12, color: 'var(--muted)', letterSpacing: '.05em' }}>{d.label}</dt>
-                      <dd key={`${d.label}-dd`} style={{ fontSize: 12, color: 'var(--ink)', margin: 0, fontWeight: 500 }}>{d.value}</dd>
-                    </>
+                    <Fragment key={d.label}>
+                      <dt style={{ fontSize: 12, color: 'var(--muted)', letterSpacing: '.05em' }}>{d.label}</dt>
+                      <dd style={{ fontSize: 12, color: 'var(--ink)', margin: 0, fontWeight: 500 }}>{d.value}</dd>
+                    </Fragment>
                   ))}
                 </dl>
               </div>
