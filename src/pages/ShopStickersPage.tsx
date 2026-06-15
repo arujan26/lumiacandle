@@ -19,11 +19,26 @@ export default function ShopStickersPage() {
 
   return (
     <>
-      <section style={{ background: 'var(--cream)', padding: '120px 0 72px', textAlign: 'center' }}>
-        <div className="wrap">
-          <span className="eyebrow" style={{ marginBottom: 16, display: 'block' }}>Shop Stickers</span>
-          <h1 style={{ fontSize: 'clamp(40px,5vw,64px)', lineHeight: .95 }}>Sticker Collections</h1>
-          <p className="lead" style={{ margin: '24px auto 0' }}>
+      {/* Image banner */}
+      <div style={{ width: '100%', height: 'clamp(300px,46vh,500px)', position: 'relative', overflow: 'hidden' }}>
+        <img src="/shop-stickers-hero.webp" alt="Lumia sticker collections" style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%',
+          objectFit: 'cover', objectPosition: 'center 42%',
+        }} />
+        <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 90, background: 'linear-gradient(180deg, rgba(245,237,224,0), var(--cream))' }} />
+      </div>
+
+      {/* Title */}
+      <section style={{ background: 'var(--cream)', padding: 'clamp(36px,5vw,60px) 0 clamp(40px,6vw,72px)', textAlign: 'center' }}>
+        <div className="wrap" style={{ maxWidth: 680, margin: '0 auto' }}>
+          <span className="eyebrow" style={{ marginBottom: 18, display: 'block' }}>Shop Stickers</span>
+          <h1 style={{ fontSize: 'clamp(42px,5.5vw,72px)', lineHeight: .95, marginBottom: 18 }}>Sticker Collections</h1>
+          <div style={{ display: 'flex', gap: 7, justifyContent: 'center', marginBottom: 22 }}>
+            {['#c9b8e0', '#e3a6aa', '#eeb18c', '#aac9a0'].map(c => (
+              <span key={c} style={{ width: 30, height: 5, borderRadius: 3, background: c }} />
+            ))}
+          </div>
+          <p style={{ fontSize: 'clamp(15px,1.6vw,18px)', color: 'var(--brown)', lineHeight: 1.7, fontWeight: 300, maxWidth: 560, margin: '0 auto' }}>
             A collection of illustrated stickers inspired by growth, healing, everyday joy, and the little moments that make life meaningful.
           </p>
         </div>
