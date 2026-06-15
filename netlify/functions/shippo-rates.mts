@@ -1,14 +1,30 @@
+import { createClient } from '@supabase/supabase-js'
+
 /**
- * Live shipping rates via Shippo. Given the customer's address + cart quantity,
- * returns real USPS rate options to show at checkout.
+ * Live shipping rates via Shippo. Parcel weight is the sum of each item's real
+ * weight (from lumia_products.weight_oz) so candles and light stickers are
+ * priced correctly.
  */
 
-function parcelFor(qty: number) {
-  const weight = qty * 16 + 4 // oz: ~1 lb per candle + packaging
-  if (qty <= 1) return { length: 5, width: 5, height: 5, weight }
-  if (qty <= 2) return { length: 8, width: 5, height: 5, weight }
-  if (qty <= 4) return { length: 9, width: 7, height: 5, weight }
-  return { length: 12, width: 9, height: 6, weight }
+async function totalWeightOz(items: { id: string; quantity: number }[]): Promise<number> {
+  const url = process.env.VITE_SUPABASE_URL
+  const key = process.env.VITE_SUPABASE_ANON_KEY
+  let weights: Record<string, number> = {}
+  if (url && key) {
+    const supabase = createClient(url, key)
+    const { data } = await supabase.from('lumia_products').select('id,weight_oz').eq('active', true)
+    for (const p of (data || []) as { id: string; weight_oz: number }[]) weights[p.id] = Number(p.weight_oz)
+  }
+  let oz = 2 // packaging
+  for (const it of items) oz += (weights[it.id] ?? 16) * (Number(it.quantity) || 1)
+  return oz
+}
+
+function parcelForWeight(oz: number) {
+  if (oz <= 5) return { length: 6, width: 4, height: 1, weight: oz }   // flat mailer (stickers)
+  if (oz <= 20) return { length: 6, width: 6, height: 5, weight: oz }
+  if (oz <= 40) return { length: 9, width: 7, height: 5, weight: oz }
+  return { length: 12, width: 9, height: 6, weight: oz }
 }
 
 function shipFrom() {
@@ -32,25 +48,17 @@ export default async (req: Request) => {
   try { body = await req.json() } catch { return json({ error: 'Invalid JSON' }, 400) }
 
   const a = body.address || {}
-  if (!a.zip || !a.street1 || !a.city || !a.state) {
-    return json({ error: 'Incomplete address' }, 400)
-  }
-  const qty = (body.items || []).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 1
+  if (!a.zip || !a.street1 || !a.city || !a.state) return json({ error: 'Incomplete address' }, 400)
+  const items = body.items || []
+  const oz = await totalWeightOz(items)
 
   const payload = {
     address_from: shipFrom(),
     address_to: {
-      name: a.name || 'Customer',
-      street1: a.street1,
-      street2: a.street2 || '',
-      city: a.city,
-      state: a.state,
-      zip: a.zip,
-      country: 'US',
-      phone: a.phone || '',
-      email: a.email || '',
+      name: a.name || 'Customer', street1: a.street1, street2: a.street2 || '',
+      city: a.city, state: a.state, zip: a.zip, country: 'US', phone: a.phone || '', email: a.email || '',
     },
-    parcels: [{ ...parcelFor(qty), distance_unit: 'in', mass_unit: 'oz' }],
+    parcels: [{ ...parcelForWeight(oz), distance_unit: 'in', mass_unit: 'oz' }],
     async: false,
   }
 
@@ -63,15 +71,10 @@ export default async (req: Request) => {
     const data = await res.json()
     if (!res.ok) return json({ error: data?.detail || 'Shippo error', detail: data }, 502)
 
-    type ShippoRate = { object_id: string; amount: string; currency: string; provider: string; estimated_days?: number; servicelevel?: { name?: string } }
+    type ShippoRate = { object_id: string; amount: string; provider: string; estimated_days?: number; servicelevel?: { name?: string } }
     const rates = (data.rates as ShippoRate[] || [])
       .filter(r => r.provider === 'USPS')
-      .map(r => ({
-        rate_id: r.object_id,
-        service: r.servicelevel?.name || r.provider,
-        amount: Number(r.amount),
-        days: r.estimated_days ?? null,
-      }))
+      .map(r => ({ rate_id: r.object_id, service: r.servicelevel?.name || r.provider, amount: Number(r.amount), days: r.estimated_days ?? null }))
       .sort((x, y) => x.amount - y.amount)
 
     if (rates.length === 0) return json({ error: 'No rates available for this address.' }, 502)

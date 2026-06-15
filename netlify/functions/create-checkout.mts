@@ -1,20 +1,25 @@
 import Stripe from 'stripe'
+import { createClient } from '@supabase/supabase-js'
 
 /**
  * Creates an embedded Stripe Checkout Session.
- * Product prices are resolved server-side from CATALOG; the shipping amount is
- * re-fetched from Shippo by rate_id (so a client can't tamper with either).
- * The shipping address is collected on our own page (for live rates) and passed
- * here, then stored in session metadata for the order record.
+ * Product names/prices/images are resolved SERVER-SIDE from lumia_products so a
+ * client can't tamper. Shipping amount is re-fetched from Shippo by rate_id.
+ * The shipping address (collected on our page for live rates) is stored in
+ * session metadata for the order record.
  */
 
-type CatalogItem = { name: string; price: number; image: string }
+interface DbProduct { id: string; name: string; price: number; image_url: string | null }
 
-const CATALOG: Record<string, CatalogItem> = {
-  'let-go': { name: 'Let Go', price: 35, image: '/products/let-go.webp' },
-  'im-safe': { name: "I'm Safe", price: 35, image: '/products/im-safe.webp' },
-  'you-are-enough': { name: 'You Are Enough', price: 35, image: '/products/you-are-enough.webp' },
-  'new-beginning': { name: 'New Beginning', price: 35, image: '/products/new-beginning.webp' },
+async function fetchProducts(): Promise<Record<string, DbProduct>> {
+  const url = process.env.VITE_SUPABASE_URL
+  const key = process.env.VITE_SUPABASE_ANON_KEY
+  if (!url || !key) return {}
+  const supabase = createClient(url, key)
+  const { data } = await supabase.from('lumia_products').select('id,name,price,image_url').eq('active', true)
+  const map: Record<string, DbProduct> = {}
+  for (const p of (data || []) as DbProduct[]) map[p.id] = { ...p, price: Number(p.price) }
+  return map
 }
 
 async function getShippoRate(rateId: string): Promise<{ amount: number; service: string } | null> {
@@ -35,11 +40,7 @@ export default async (req: Request) => {
   const secret = process.env.STRIPE_SECRET_KEY
   if (!secret) return json({ error: 'Stripe not configured.' }, 500)
 
-  let body: {
-    items?: { id: string; quantity: number }[]
-    rate_id?: string
-    address?: Record<string, string>
-  }
+  let body: { items?: { id: string; quantity: number }[]; rate_id?: string; address?: Record<string, string> }
   try { body = await req.json() } catch { return json({ error: 'Invalid JSON body' }, 400) }
 
   const items = Array.isArray(body.items) ? body.items : []
@@ -53,25 +54,28 @@ export default async (req: Request) => {
   if (!rate) return json({ error: 'Shipping rate expired. Please re-select.' }, 400)
 
   const origin = process.env.URL || req.headers.get('origin') || 'https://lumiacandle.com'
+  const products = await fetchProducts()
   const stripe = new Stripe(secret)
 
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = []
   for (const it of items) {
-    const product = CATALOG[it.id]
+    const p = products[it.id]
     const qty = Math.max(1, Math.min(99, Math.floor(Number(it.quantity) || 1)))
-    if (!product) continue
+    if (!p) continue
+    const img = p.image_url
+      ? (p.image_url.startsWith('http') ? p.image_url : origin + p.image_url)
+      : undefined
     line_items.push({
       quantity: qty,
       price_data: {
         currency: 'usd',
-        unit_amount: Math.round(product.price * 100),
-        product_data: { name: product.name, images: [origin + product.image] },
+        unit_amount: Math.round(p.price * 100),
+        product_data: { name: p.name, ...(img ? { images: [img] } : {}) },
       },
     })
   }
   if (line_items.length === 0) return json({ error: 'No valid items' }, 400)
 
-  // Shipping as a line item (address already collected on our page)
   line_items.push({
     quantity: 1,
     price_data: {
@@ -89,15 +93,10 @@ export default async (req: Request) => {
       billing_address_collection: 'auto',
       customer_email: a.email || undefined,
       metadata: {
-        ship_name: a.name || '',
-        ship_phone: a.phone || '',
-        ship_street1: a.street1 || '',
-        ship_street2: a.street2 || '',
-        ship_city: a.city || '',
-        ship_state: a.state || '',
-        ship_zip: a.zip || '',
-        ship_country: 'US',
-        ship_service: rate.service,
+        ship_name: a.name || '', ship_phone: a.phone || '',
+        ship_street1: a.street1 || '', ship_street2: a.street2 || '',
+        ship_city: a.city || '', ship_state: a.state || '',
+        ship_zip: a.zip || '', ship_country: 'US', ship_service: rate.service,
       },
       return_url: `${origin}/order/success?session_id={CHECKOUT_SESSION_ID}`,
     })

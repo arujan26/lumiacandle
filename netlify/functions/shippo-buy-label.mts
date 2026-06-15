@@ -6,12 +6,11 @@ import { createClient } from '@supabase/supabase-js'
  * allowlisted admin before spending money on a label.
  */
 
-function parcelFor(qty: number) {
-  const weight = qty * 16 + 4
-  if (qty <= 1) return { length: 5, width: 5, height: 5, weight }
-  if (qty <= 2) return { length: 8, width: 5, height: 5, weight }
-  if (qty <= 4) return { length: 9, width: 7, height: 5, weight }
-  return { length: 12, width: 9, height: 6, weight }
+function parcelForWeight(oz: number) {
+  if (oz <= 5) return { length: 6, width: 4, height: 1, weight: oz }
+  if (oz <= 20) return { length: 6, width: 6, height: 5, weight: oz }
+  if (oz <= 40) return { length: 9, width: 7, height: 5, weight: oz }
+  return { length: 12, width: 9, height: 6, weight: oz }
 }
 
 export default async (req: Request) => {
@@ -29,11 +28,17 @@ export default async (req: Request) => {
   const { data: isAdmin } = await supabase.rpc('lumia_is_admin')
   if (isAdmin !== true) return json({ error: 'Forbidden' }, 403)
 
-  let body: { address?: Record<string, string>; items?: { quantity: number }[] }
+  let body: { address?: Record<string, string>; items?: { product_name?: string; quantity: number }[] }
   try { body = await req.json() } catch { return json({ error: 'Invalid JSON' }, 400) }
   const a = body.address || {}
   if (!a.zip || !a.street1 || !a.city || !a.state) return json({ error: 'Order has no shipping address' }, 400)
-  const qty = (body.items || []).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 1
+
+  // Real parcel weight: match order item names to lumia_products.weight_oz
+  const { data: prods } = await supabase.from('lumia_products').select('name,weight_oz')
+  const wByName: Record<string, number> = {}
+  for (const p of (prods || []) as { name: string; weight_oz: number }[]) wByName[p.name] = Number(p.weight_oz)
+  let oz = 2
+  for (const it of (body.items || [])) oz += (wByName[it.product_name || ''] ?? 16) * (Number(it.quantity) || 1)
 
   const shipFrom = {
     name: process.env.SHIP_FROM_NAME || 'Lumia Candles',
@@ -57,7 +62,7 @@ export default async (req: Request) => {
           name: a.name || 'Customer', street1: a.street1, street2: a.street2 || '',
           city: a.city, state: a.state, zip: a.zip, country: 'US', phone: a.phone || '',
         },
-        parcels: [{ ...parcelFor(qty), distance_unit: 'in', mass_unit: 'oz' }],
+        parcels: [{ ...parcelForWeight(oz), distance_unit: 'in', mass_unit: 'oz' }],
         async: false,
       }),
     })
