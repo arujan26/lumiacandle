@@ -7,6 +7,8 @@ import StudioHome from './StudioHome'
 import StudioBuilder from './StudioBuilder'
 import StudioTheme from './StudioTheme'
 import StudioFonts from './StudioFonts'
+import StudioCustomers from './StudioCustomers'
+import StudioMedia from './StudioMedia'
 import CommandPalette from './CommandPalette'
 import AdminProducts from '../pages/admin/AdminProducts'
 import AdminOrders from '../pages/admin/AdminOrders'
@@ -42,6 +44,8 @@ export default function StudioShell() {
             : active === 'builder' ? <StudioBuilder device={device} zoom={zoom} />
               : active === 'theme' ? <StudioTheme />
                 : active === 'fonts' ? <StudioFonts />
+                  : active === 'customers' ? <StudioCustomers />
+                    : active === 'media' ? <StudioMedia />
                 : active === 'products' ? <Connected><AdminProducts /></Connected>
                   : active === 'orders' ? <Connected><AdminOrders /></Connected>
                     : active === 'messages' ? <Connected><AdminMessages /></Connected>

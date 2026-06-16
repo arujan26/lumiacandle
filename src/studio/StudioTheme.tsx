@@ -1,6 +1,7 @@
 import { useState, type CSSProperties } from 'react'
 import { motion } from 'framer-motion'
 import { Icon } from './icons'
+import { adminSaveSettings } from '../lib/settings'
 
 const card: CSSProperties = { background: 'var(--st-bg-2)', border: '1px solid var(--st-border)', borderRadius: 'var(--st-r-md)', padding: 20 }
 const fade = { hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const } } }
@@ -40,6 +41,16 @@ export default function StudioTheme() {
   const [body, setBody] = useState(FONTS[4])
   const [cFg, setCFg] = useState('#A2A2AD')
   const [cBg, setCBg] = useState('#15151B')
+  const [applyMsg, setApplyMsg] = useState('')
+  const [applying, setApplying] = useState(false)
+
+  const apply = async () => {
+    setApplying(true); setApplyMsg('')
+    const { error } = await adminSaveSettings({ accent: tokens.accent })
+    setApplying(false)
+    setApplyMsg(error ? error : '✓ Applied — live on the store')
+    setTimeout(() => setApplyMsg(''), 2500)
+  }
 
   const W: [number, number, number] = [255, 255, 255], K: [number, number, number] = [10, 10, 12]
   const ramp = [mix(base, W, 0.82), mix(base, W, 0.55), mix(base, W, 0.28), base, mix(base, K, 0.22), mix(base, K, 0.45), mix(base, K, 0.66)]
@@ -52,9 +63,12 @@ export default function StudioTheme() {
           <h1 style={{ fontSize: 21, fontWeight: 600, margin: 0 }}>Theme Studio</h1>
           <p style={{ color: 'var(--st-text-3)', fontSize: 13, margin: '4px 0 0' }}>Design tokens, palette, type & accessibility.</p>
         </div>
-        <button style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 32, padding: '0 14px', borderRadius: 8, background: 'var(--st-accent)', color: '#1a1410', fontSize: 12.5, fontWeight: 500 }}>
-          <Icon name="check" size={14} /> Apply theme
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {applyMsg && <span style={{ fontSize: 12, color: applyMsg.startsWith('✓') ? 'var(--st-live)' : 'var(--st-danger)' }}>{applyMsg}</span>}
+          <button onClick={apply} disabled={applying} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 32, padding: '0 14px', borderRadius: 8, background: 'var(--st-accent)', color: '#1a1410', fontSize: 12.5, fontWeight: 500 }}>
+            <Icon name="check" size={14} /> {applying ? 'Applying…' : 'Apply accent'}
+          </button>
+        </div>
       </motion.div>
 
       {/* Brand tokens */}
