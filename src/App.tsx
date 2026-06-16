@@ -20,6 +20,7 @@ import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminMessages from './pages/admin/AdminMessages'
 import AdminSettings from './pages/admin/AdminSettings'
+import StudioShell from './studio/StudioShell'
 
 function Footer() {
   return (
@@ -88,6 +89,7 @@ function DashboardApp() {
   return (
     <Routes>
       <Route path="/login" element={<AdminLogin />} />
+      <Route path="/studio" element={<StudioShell />} />
       <Route element={<AdminLayout />}>
         <Route path="/" element={<AdminOverview />} />
         <Route path="/products" element={<AdminProducts />} />
@@ -114,6 +116,9 @@ function StoreApp() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order/success" element={<OrderSuccessPage />} />
       </Route>
+
+      {/* Lumia Studio — premium dashboard (mock-data phase) */}
+      <Route path="/studio" element={<StudioShell />} />
 
       {/* Admin (also reachable at /admin on the main domain / localhost) */}
       <Route path="/admin/login" element={<AdminLogin />} />

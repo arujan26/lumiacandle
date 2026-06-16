@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+.studio {
+  --st-bg: #0A0A0C;
+  --st-bg-1: #101013;
+  --st-bg-2: #161619;
+  --st-bg-3: #1D1D22;
+  --st-border: rgba(255, 255, 255, .08);
+  --st-border-2: rgba(255, 255, 255, .15);
+  --st-text: #F3F3F6;
+  --st-text-2: #A2A2AD;
+  --st-text-3: #67676F;
+  --st-accent: #C9A86A;
+  --st-accent-soft: rgba(201, 168, 106, .14);
+  --st-live: #4ADE80;
+  --st-pending: #E6B450;
+  --st-draft: #8A8A94;
+  --st-danger: #F0726B;
+  --st-r-sm: 7px;
+  --st-r-md: 10px;
+  --st-r-lg: 14px;
+  --st-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--st-bg);
+  color: var(--st-text);
+  min-height: 100svh;
+  font-size: 13.5px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -.005em;
+}
+.studio *, .studio *::before, .studio *::after { box-sizing: border-box; }
+.studio ::selection { background: var(--st-accent-soft); }
+.studio button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+.studio input { font-family: inherit; }
+.studio a { color: inherit; text-decoration: none; }
+.studio ::-webkit-scrollbar { width: 11px; height: 11px; }
+.studio ::-webkit-scrollbar-thumb { background: #26262c; border-radius: 8px; border: 3px solid var(--st-bg); }
+.studio ::-webkit-scrollbar-thumb:hover { background: #34343b; }
+.studio ::-webkit-scrollbar-track { background: transparent; }
+.st-mono { font-family: var(--st-mono); font-feature-settings: 'tnum'; }
+
+@keyframes st-shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+.st-skel {
+  background: linear-gradient(90deg, #161619 0%, #1f1f24 50%, #161619 100%);
+  background-size: 800px 100%;
+  animation: st-shimmer 1.4s infinite linear;
+  border-radius: var(--st-r-sm);
+}
+.studio .st-rail-btn { position: relative; }
+.studio .st-tip {
+  position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%);
+  white-space: nowrap; background: #1f1f24; border: 1px solid var(--st-border);
+  color: var(--st-text); font-size: 12px; padding: 5px 10px; border-radius: 7px;
+  opacity: 0; pointer-events: none; transition: opacity .12s ease; z-index: 60;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, .45);
+}
+.studio .st-rail-btn:hover .st-tip { opacity: 1; }
+.studio .st-hover { transition: background .12s ease, color .12s ease, border-color .12s ease; }
+.studio .st-hover:hover { background: var(--st-bg-3); }
