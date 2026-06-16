@@ -95,6 +95,7 @@ export default function Header({ onCartOpen }: HeaderProps) {
           </nav>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Link to="/account" aria-label="Account" style={{ display: 'flex', alignItems: 'center', fontSize: 10, letterSpacing: '.18em', textTransform: 'uppercase', color: cartColor, fontWeight: 500, transition: 'color .35s' }}>Account</Link>
             <button onClick={onCartOpen} style={{
               display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px',
               border: `1px solid ${cartBorder}`, background: 'transparent',
