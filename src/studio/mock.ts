@@ -6,6 +6,7 @@ export const NAV: NavItem[] = [
   { id: 'home', label: 'Home', icon: 'home' },
   { id: 'builder', label: 'Visual Builder', icon: 'builder' },
   { id: 'theme', label: 'Theme Studio', icon: 'theme' },
+  { id: 'fonts', label: 'Fonts', icon: 'type' },
   { id: 'products', label: 'Products', icon: 'products' },
   { id: 'orders', label: 'Orders', icon: 'orders' },
   { id: 'messages', label: 'Messages', icon: 'mail' },

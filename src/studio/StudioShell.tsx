@@ -6,6 +6,7 @@ import { NAV, type NavItem } from './mock'
 import StudioHome from './StudioHome'
 import StudioBuilder from './StudioBuilder'
 import StudioTheme from './StudioTheme'
+import StudioFonts from './StudioFonts'
 import CommandPalette from './CommandPalette'
 import AdminProducts from '../pages/admin/AdminProducts'
 import AdminOrders from '../pages/admin/AdminOrders'
@@ -40,6 +41,7 @@ export default function StudioShell() {
           {active === 'home' ? <StudioHome />
             : active === 'builder' ? <StudioBuilder device={device} zoom={zoom} />
               : active === 'theme' ? <StudioTheme />
+                : active === 'fonts' ? <StudioFonts />
                 : active === 'products' ? <Connected><AdminProducts /></Connected>
                   : active === 'orders' ? <Connected><AdminOrders /></Connected>
                     : active === 'messages' ? <Connected><AdminMessages /></Connected>

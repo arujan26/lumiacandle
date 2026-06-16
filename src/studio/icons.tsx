@@ -6,7 +6,7 @@ export type IconName =
   | 'bell' | 'command' | 'search' | 'plus' | 'sparkles' | 'chevronRight'
   | 'check' | 'mail' | 'arrowUp' | 'arrowDown' | 'monitor' | 'mobile'
   | 'zoomIn' | 'zoomOut' | 'eye' | 'dot' | 'logout' | 'external' | 'ticket'
-  | 'calendar' | 'bolt'
+  | 'calendar' | 'bolt' | 'type' | 'x'
 
 export function Icon({ name, size = 18, style, strokeWidth = 1.7 }: { name: IconName; size?: number; style?: CSSProperties; strokeWidth?: number }) {
   return (
@@ -53,5 +53,7 @@ function paths(n: IconName): ReactNode {
     case 'ticket': return <><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z" /><path d="M15 6v12" /></>
     case 'calendar': return <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 9h18M8 3v4M16 3v4" /></>
     case 'bolt': return <path d="M13 3L5 13h5l-1 8 8-10h-5z" />
+    case 'type': return <><path d="M5 6h14M12 6v13M9 19h6" /></>
+    case 'x': return <path d="M6 6l12 12M18 6L6 18" />
   }
 }

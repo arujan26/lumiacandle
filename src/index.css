@@ -36,7 +36,7 @@ p { line-height: 1.7; color: var(--muted); font-size: 15px; font-weight: 300; te
 .lead { font-size: clamp(16px,1.8vw,20px); max-width: 600px; color: var(--brown); font-weight: 300; line-height: 1.75; text-wrap: pretty; }
 .wrap { width: var(--wrap); margin: 0 auto; }
 .section { padding: clamp(80px,10vw,160px) 0; }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; font-weight: 500; font-family: var(--sans); cursor: pointer; transition: all .35s var(--ease); border: 1px solid var(--ink); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; font-weight: 500; font-family: var(--font-btn, var(--sans)); cursor: pointer; transition: all .35s var(--ease); border: 1px solid var(--ink); }
 .btn-dark { background: var(--ink); color: var(--white); }
 .btn-dark:hover { background: var(--brown); border-color: var(--brown); transform: translateY(-2px); box-shadow: 0 16px 40px rgba(26,20,16,.25); }
 .btn-outline { background: transparent; color: var(--ink); }

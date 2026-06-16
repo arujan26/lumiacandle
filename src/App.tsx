@@ -6,6 +6,7 @@ import { useAuth } from './lib/auth'
 import { useSettings } from './lib/settings'
 import Header from './components/Header'
 import CartDrawer from './components/CartDrawer'
+import FontLoader from './components/FontLoader'
 import HomePage from './pages/HomePage'
 import ShopCandlesPage from './pages/ShopCandlesPage'
 import ProductPage from './pages/ProductPage'
@@ -76,6 +77,7 @@ function StorefrontLayout() {
 
   return (
     <>
+      <FontLoader />
       <Header onCartOpen={() => setCartOpen(true)} />
       <main>
         <Outlet />
