@@ -5,6 +5,7 @@ import { Icon } from './icons'
 import { NAV, type NavItem } from './mock'
 import StudioHome from './StudioHome'
 import StudioBuilder from './StudioBuilder'
+import StudioTheme from './StudioTheme'
 import CommandPalette from './CommandPalette'
 
 export default function StudioShell() {
@@ -32,7 +33,8 @@ export default function StudioShell() {
         <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
           {active === 'home' ? <StudioHome />
             : active === 'builder' ? <StudioBuilder device={device} zoom={zoom} />
-              : <Placeholder key={active} item={item} />}
+              : active === 'theme' ? <StudioTheme />
+                : <Placeholder key={active} item={item} />}
         </div>
         <BottomBar device={device} setDevice={setDevice} zoom={zoom} setZoom={setZoom} />
       </div>
