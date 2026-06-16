@@ -89,7 +89,7 @@ function Section({ title, items, onAdd, onEdit, onChanged }: {
                 {p.image_url
                   ? <img src={p.image_url} alt={p.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: p.image_position || '50% 50%' }} />
                   : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--champagne)', fontFamily: 'var(--serif)', fontSize: 40 }}>✦</div>}
-                {!p.active && <span style={{ position: 'absolute', top: 10, left: 10, background: 'var(--ink)', color: 'white', fontSize: 8, letterSpacing: '.15em', padding: '4px 8px', textTransform: 'uppercase' }}>Hidden</span>}
+                {!p.active && <span style={{ position: 'absolute', top: 10, left: 10, background: 'var(--ink)', color: 'var(--white)', fontSize: 8, letterSpacing: '.15em', padding: '4px 8px', textTransform: 'uppercase' }}>Hidden</span>}
               </div>
               <div style={{ padding: 14 }}>
                 <div style={{ fontFamily: 'var(--serif)', fontSize: 19, marginBottom: 2 }}>{p.name || '(no name)'}</div>

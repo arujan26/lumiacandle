@@ -7,6 +7,12 @@ import StudioHome from './StudioHome'
 import StudioBuilder from './StudioBuilder'
 import StudioTheme from './StudioTheme'
 import CommandPalette from './CommandPalette'
+import AdminProducts from '../pages/admin/AdminProducts'
+import AdminOrders from '../pages/admin/AdminOrders'
+import AdminMessages from '../pages/admin/AdminMessages'
+import AdminSettings from '../pages/admin/AdminSettings'
+
+const Connected = ({ children }: { children: React.ReactNode }) => <div className="studio-admin">{children}</div>
 
 export default function StudioShell() {
   const [active, setActive] = useState('home')
@@ -34,7 +40,11 @@ export default function StudioShell() {
           {active === 'home' ? <StudioHome />
             : active === 'builder' ? <StudioBuilder device={device} zoom={zoom} />
               : active === 'theme' ? <StudioTheme />
-                : <Placeholder key={active} item={item} />}
+                : active === 'products' ? <Connected><AdminProducts /></Connected>
+                  : active === 'orders' ? <Connected><AdminOrders /></Connected>
+                    : active === 'messages' ? <Connected><AdminMessages /></Connected>
+                      : active === 'settings' ? <Connected><AdminSettings /></Connected>
+                        : <Placeholder key={active} item={item} />}
         </div>
         <BottomBar device={device} setDevice={setDevice} zoom={zoom} setZoom={setZoom} />
       </div>

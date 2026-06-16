@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useNavigate, Navigate } from 'react-router-dom'
 import './index.css'
-import { isDashboardHost } from './lib/adminBase'
+import { isDashboardHost, ADMIN_LOGIN } from './lib/adminBase'
+import { useAuth } from './lib/auth'
 import { useSettings } from './lib/settings'
 import Header from './components/Header'
 import CartDrawer from './components/CartDrawer'
@@ -85,19 +86,18 @@ function StorefrontLayout() {
   )
 }
 
+function GatedStudio() {
+  const { allowed, loading } = useAuth()
+  if (loading) return <div style={{ minHeight: '100svh', background: '#0A0A0C' }} />
+  if (!allowed) return <Navigate to={ADMIN_LOGIN} replace />
+  return <StudioShell />
+}
+
 function DashboardApp() {
   return (
     <Routes>
       <Route path="/login" element={<AdminLogin />} />
-      <Route path="/studio" element={<StudioShell />} />
-      <Route element={<AdminLayout />}>
-        <Route path="/" element={<AdminOverview />} />
-        <Route path="/products" element={<AdminProducts />} />
-        <Route path="/orders" element={<AdminOrders />} />
-        <Route path="/messages" element={<AdminMessages />} />
-        <Route path="/settings" element={<AdminSettings />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<GatedStudio />} />
     </Routes>
   )
 }
@@ -117,8 +117,8 @@ function StoreApp() {
         <Route path="/order/success" element={<OrderSuccessPage />} />
       </Route>
 
-      {/* Lumia Studio — premium dashboard (mock-data phase) */}
-      <Route path="/studio" element={<StudioShell />} />
+      {/* Lumia Studio — premium dashboard (gated) */}
+      <Route path="/studio" element={<GatedStudio />} />
 
       {/* Admin (also reachable at /admin on the main domain / localhost) */}
       <Route path="/admin/login" element={<AdminLogin />} />

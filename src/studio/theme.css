@@ -59,3 +59,18 @@
 .studio .st-rail-btn:hover .st-tip { opacity: 1; }
 .studio .st-hover { transition: background .12s ease, color .12s ease, border-color .12s ease; }
 .studio .st-hover:hover { background: var(--st-bg-3); }
+
+/* Remap the storefront light tokens to dark so the connected admin screens
+   render natively inside the Studio without rewriting them. */
+.studio .studio-admin {
+  --white: #161619; --ivory: #101013; --cream: #0d0d10; --parchment: #1d1d22;
+  --ink: #F3F3F6; --muted: #A2A2AD; --muted-light: #6c6c75; --line: rgba(255, 255, 255, .09);
+  --gold: #C9A86A; --champagne: #C9A86A; --brown: #d3bb94;
+  color: #F3F3F6;
+  background: var(--st-bg);
+  min-height: 100%;
+  padding: 26px 30px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.studio .studio-admin h1, .studio .studio-admin h2, .studio .studio-admin h3, .studio .studio-admin h4 { font-family: 'Inter', system-ui, sans-serif; letter-spacing: -.01em; }
+.studio .studio-admin input, .studio .studio-admin textarea, .studio .studio-admin select { color: #F3F3F6; }
