@@ -34,13 +34,23 @@ async function getShippoRate(rateId: string): Promise<{ amount: number; service:
   return { amount: Number(r.amount), service: r.servicelevel?.name || 'USPS' }
 }
 
+interface CouponRow { code: string; type: string; value: number; max_uses: number | null; used_count: number; min_subtotal: number; expires_at: string | null }
+async function fetchCoupon(code: string): Promise<CouponRow | null> {
+  const url = process.env.VITE_SUPABASE_URL
+  const key = process.env.VITE_SUPABASE_ANON_KEY
+  if (!url || !key) return null
+  const supabase = createClient(url, key)
+  const { data } = await supabase.from('lumia_coupons').select('*').ilike('code', code.trim().toUpperCase()).eq('active', true).maybeSingle()
+  return (data as CouponRow) || null
+}
+
 export default async (req: Request) => {
   if (req.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405)
 
   const secret = process.env.STRIPE_SECRET_KEY
   if (!secret) return json({ error: 'Stripe not configured.' }, 500)
 
-  let body: { items?: { id: string; quantity: number }[]; rate_id?: string; address?: Record<string, string> }
+  let body: { items?: { id: string; quantity: number }[]; rate_id?: string; address?: Record<string, string>; coupon?: string }
   try { body = await req.json() } catch { return json({ error: 'Invalid JSON body' }, 400) }
 
   const items = Array.isArray(body.items) ? body.items : []
@@ -58,10 +68,12 @@ export default async (req: Request) => {
   const stripe = new Stripe(secret)
 
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = []
+  let subtotal = 0
   for (const it of items) {
     const p = products[it.id]
     const qty = Math.max(1, Math.min(99, Math.floor(Number(it.quantity) || 1)))
     if (!p) continue
+    subtotal += p.price * qty
     const img = p.image_url
       ? (p.image_url.startsWith('http') ? p.image_url : origin + p.image_url)
       : undefined
@@ -85,11 +97,27 @@ export default async (req: Request) => {
     },
   })
 
+  // Apply a discount coupon if valid
+  const discounts: Stripe.Checkout.SessionCreateParams.Discount[] = []
+  let appliedCoupon = ''
+  if (body.coupon) {
+    const c = await fetchCoupon(body.coupon)
+    const ok = c && (!c.expires_at || new Date(c.expires_at) > new Date()) && (c.max_uses == null || c.used_count < c.max_uses) && subtotal >= Number(c.min_subtotal)
+    if (c && ok) {
+      const sc = c.type === 'percent'
+        ? await stripe.coupons.create({ percent_off: Math.min(100, Number(c.value)), duration: 'once', name: c.code })
+        : await stripe.coupons.create({ amount_off: Math.round(Number(c.value) * 100), currency: 'usd', duration: 'once', name: c.code })
+      discounts.push({ coupon: sc.id })
+      appliedCoupon = c.code
+    }
+  }
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       ui_mode: 'embedded_page' as 'embedded',
       line_items,
+      ...(discounts.length ? { discounts } : {}),
       billing_address_collection: 'auto',
       customer_email: a.email || undefined,
       metadata: {
@@ -97,6 +125,7 @@ export default async (req: Request) => {
         ship_street1: a.street1 || '', ship_street2: a.street2 || '',
         ship_city: a.city || '', ship_state: a.state || '',
         ship_zip: a.zip || '', ship_country: 'US', ship_service: rate.service,
+        coupon: appliedCoupon,
       },
       return_url: `${origin}/order/success?session_id={CHECKOUT_SESSION_ID}`,
     })

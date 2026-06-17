@@ -35,14 +35,14 @@ export default function ShopStickersPage() {
       <section style={{ background: 'var(--cream)', padding: 'clamp(36px,5vw,60px) 0 clamp(40px,6vw,72px)', textAlign: 'center' }}>
         <div className="wrap" style={{ maxWidth: 680, margin: '0 auto' }}>
           <span className="eyebrow" style={{ marginBottom: 18, display: 'block' }}>Shop Stickers</span>
-          <h1 style={{ fontSize: 'clamp(42px,5.5vw,72px)', lineHeight: .95, marginBottom: 18 }}>Sticker Collections</h1>
+          <h1 style={{ fontSize: 'clamp(42px,5.5vw,72px)', lineHeight: .95, marginBottom: 18 }}>{settings.stickers_title || 'Sticker Collections'}</h1>
           <div style={{ display: 'flex', gap: 7, justifyContent: 'center', marginBottom: 22 }}>
             {['#c9b8e0', '#e3a6aa', '#eeb18c', '#aac9a0'].map(c => (
               <span key={c} style={{ width: 30, height: 5, borderRadius: 3, background: c }} />
             ))}
           </div>
           <p style={{ fontSize: 'clamp(15px,1.6vw,18px)', color: 'var(--brown)', lineHeight: 1.7, fontWeight: 300, maxWidth: 560, margin: '0 auto' }}>
-            A collection of illustrated stickers inspired by growth, healing, everyday joy, and the little moments that make life meaningful.
+            {settings.stickers_sub || 'A collection of illustrated stickers inspired by growth, healing, everyday joy, and the little moments that make life meaningful.'}
           </p>
         </div>
       </section>

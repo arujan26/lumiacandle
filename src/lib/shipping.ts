@@ -36,11 +36,11 @@ export async function fetchRates(address: ShipAddress): Promise<Rate[]> {
 }
 
 /** Creates the embedded Stripe session for the cart + chosen rate, returns the client secret. */
-export async function createCheckoutSession(rateId: string, address: ShipAddress): Promise<string> {
+export async function createCheckoutSession(rateId: string, address: ShipAddress, coupon?: string): Promise<string> {
   const res = await fetch('/.netlify/functions/create-checkout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ items: cartItems(), rate_id: rateId, address }),
+    body: JSON.stringify({ items: cartItems(), rate_id: rateId, address, coupon: coupon || undefined }),
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok || !data.clientSecret) throw new Error(data.error || 'Could not start checkout.')

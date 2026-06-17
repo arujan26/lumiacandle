@@ -4,6 +4,7 @@ import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe
 import { stripePromise } from '../lib/stripe'
 import { useCart, cart } from '../lib/cart'
 import { fetchRates, createCheckoutSession, type ShipAddress, type Rate } from '../lib/shipping'
+import { validateCoupon } from '../lib/coupons'
 
 const EMPTY: ShipAddress = { name: '', email: '', phone: '', street1: '', street2: '', city: '', state: '', zip: '' }
 
@@ -17,6 +18,16 @@ export default function CheckoutPage() {
   const [clientSecret, setClientSecret] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [coupon, setCoupon] = useState('')
+  const [appliedCode, setAppliedCode] = useState('')
+  const [discount, setDiscount] = useState(0)
+  const [couponMsg, setCouponMsg] = useState('')
+
+  const applyCoupon = async () => {
+    const { coupon: c, discount: d, error: e } = await validateCoupon(coupon, subtotal)
+    if (e || !c) { setAppliedCode(''); setDiscount(0); setCouponMsg(e || 'Invalid code.'); return }
+    setAppliedCode(c.code); setDiscount(d); setCouponMsg(`✓ ${c.code} applied — you save $${d.toFixed(2)}`)
+  }
 
   const set = (k: keyof ShipAddress, v: string) => setAddr(p => ({ ...p, [k]: v }))
   const fetchClientSecret = useCallback(async () => clientSecret, [clientSecret])
@@ -49,7 +60,7 @@ export default function CheckoutPage() {
   const goToPay = async () => {
     setBusy(true); setError('')
     try {
-      const cs = await createCheckoutSession(rateId, addr)
+      const cs = await createCheckoutSession(rateId, addr, appliedCode)
       setClientSecret(cs)
       setStep('pay')
     } catch (err) {
@@ -80,13 +91,27 @@ export default function CheckoutPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 10, marginTop: 6, borderTop: '1px solid var(--line)', fontSize: 14, color: 'var(--muted)' }}>
             <span>Subtotal</span><span>${subtotal}</span>
           </div>
+          {discount > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 6, fontSize: 14, color: 'var(--gold)' }}>
+              <span>Discount ({appliedCode})</span><span>−${discount.toFixed(2)}</span>
+            </div>
+          )}
+          {step !== 'pay' && (
+            <>
+              <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                <input value={coupon} onChange={e => setCoupon(e.target.value)} placeholder="Discount code" style={{ flex: 1, padding: '9px 12px', border: '1px solid var(--line)', background: 'var(--white)', fontSize: 13, textTransform: 'uppercase', outline: 'none', borderRadius: 0, fontFamily: 'var(--sans)' }} />
+                <button type="button" onClick={applyCoupon} className="btn btn-outline" style={{ padding: '9px 18px', fontSize: 9 }}>Apply</button>
+              </div>
+              {couponMsg && <p style={{ fontSize: 11.5, marginTop: 6, color: couponMsg.startsWith('✓') ? '#3a7a4a' : '#c04a3a' }}>{couponMsg}</p>}
+            </>
+          )}
           {chosen && (
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 6, fontSize: 14, color: 'var(--muted)' }}>
                 <span>Shipping ({chosen.service})</span><span>${chosen.amount.toFixed(2)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 10, marginTop: 6, borderTop: '1px solid var(--line)', fontFamily: 'var(--serif)', fontSize: 22 }}>
-                <span>Total</span><span>${(subtotal + chosen.amount).toFixed(2)}</span>
+                <span>Total</span><span>${Math.max(0, subtotal + chosen.amount - discount).toFixed(2)}</span>
               </div>
             </>
           )}

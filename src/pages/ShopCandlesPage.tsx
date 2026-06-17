@@ -26,7 +26,7 @@ export default function ShopCandlesPage() {
       <section style={{ background: 'var(--ivory)', padding: 'clamp(40px,6vw,72px) 0 clamp(36px,5vw,56px)', textAlign: 'center' }}>
         <div className="wrap" style={{ maxWidth: 660, margin: '0 auto' }}>
           <span className="eyebrow" style={{ marginBottom: 18, display: 'block' }}>The Collection</span>
-          <h1 style={{ fontSize: 'clamp(42px,5.5vw,72px)', lineHeight: .95, marginBottom: 18 }}>Shop Candles</h1>
+          <h1 style={{ fontSize: 'clamp(42px,5.5vw,72px)', lineHeight: .95, marginBottom: 18 }}>{settings.candles_title || 'Shop Candles'}</h1>
           {/* four emotion pastels */}
           <div style={{ display: 'flex', gap: 7, justifyContent: 'center', marginBottom: 22 }}>
             {EMOTION_PASTELS.map(c => (
@@ -34,7 +34,7 @@ export default function ShopCandlesPage() {
             ))}
           </div>
           <p style={{ fontSize: 'clamp(15px,1.6vw,18px)', color: 'var(--brown)', lineHeight: 1.7, fontWeight: 300, maxWidth: 540, margin: '0 auto' }}>
-            Each candle is named after an emotion — a feeling you want to sit with, release, or step into.
+            {settings.candles_sub || 'Each candle is named after an emotion — a feeling you want to sit with, release, or step into.'}
           </p>
         </div>
       </section>

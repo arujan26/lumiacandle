@@ -27,11 +27,12 @@ export default function HomePage() {
         <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: 680, padding: 'clamp(100px,14vw,180px) 0 clamp(80px,10vw,140px)' }}>
             <span className="eyebrow" style={{ color: 'var(--champagne)', marginBottom: 24, display: 'block' }}>
-              Lumia Candles
+              {settings.home_hero_eyebrow || 'Lumia Candles'}
             </span>
             <h1 style={{ color: 'var(--white)', marginBottom: 28, lineHeight: .92 }}>
-              Candles inspired by <em style={{ fontStyle: 'italic', color: 'var(--champagne)' }}>emotions</em>,<br />
-              rituals, and meaningful<br />moments.
+              {settings.home_hero_title
+                ? settings.home_hero_title
+                : <>Candles inspired by <em style={{ fontStyle: 'italic', color: 'var(--champagne)' }}>emotions</em>,<br />rituals, and meaningful<br />moments.</>}
             </h1>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 44 }}>
               <Link to="/shop/candles" className="btn btn-ghost">Shop Candles</Link>

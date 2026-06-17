@@ -8,6 +8,7 @@ import StudioBuilder from './StudioBuilder'
 import StudioTheme from './StudioTheme'
 import StudioFonts from './StudioFonts'
 import StudioCustomers from './StudioCustomers'
+import StudioMarketing from './StudioMarketing'
 import StudioMedia from './StudioMedia'
 import CommandPalette from './CommandPalette'
 import AdminProducts from '../pages/admin/AdminProducts'
@@ -45,6 +46,7 @@ export default function StudioShell() {
               : active === 'theme' ? <StudioTheme />
                 : active === 'fonts' ? <StudioFonts />
                   : active === 'customers' ? <StudioCustomers />
+                    : active === 'marketing' ? <StudioMarketing />
                     : active === 'media' ? <StudioMedia />
                 : active === 'products' ? <Connected><AdminProducts /></Connected>
                   : active === 'orders' ? <Connected><AdminOrders /></Connected>

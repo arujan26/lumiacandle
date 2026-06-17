@@ -65,6 +65,9 @@ export default async (req: Request) => {
     .upsert(order, { onConflict: 'stripe_session_id', ignoreDuplicates: true })
   if (dbErr) return json({ error: dbErr.message }, 500)
 
+  // Count coupon usage (best-effort)
+  if (m.coupon) { try { await supabase.rpc('lumia_redeem_coupon', { p_code: m.coupon }) } catch { /* ignore */ } }
+
   // Confirmation email (best-effort)
   if (order.email && process.env.RESEND_API_KEY) {
     try {

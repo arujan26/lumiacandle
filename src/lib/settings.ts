@@ -16,6 +16,13 @@ const DEFAULTS: Settings = {
   contact_email: 'contact@lumiacandle.com',
   instagram: 'https://instagram.com/lumiacandles',
   tiktok: 'https://tiktok.com/@lumiacandles',
+  // Editable page copy (empty title = keep the styled default)
+  home_hero_eyebrow: 'Lumia Candles',
+  home_hero_title: '',
+  candles_title: 'Shop Candles',
+  candles_sub: 'Each candle is named after an emotion — a feeling you want to sit with, release, or step into.',
+  stickers_title: 'Sticker Collections',
+  stickers_sub: 'A collection of illustrated stickers inspired by growth, healing, everyday joy, and the little moments that make life meaningful.',
   // desktop positions + optional separate mobile image/position per hero
   ...Object.fromEntries(HERO_KEYS.flatMap(k => [
     [`${k}_pos`, '50% 50%'],

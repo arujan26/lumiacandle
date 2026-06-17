@@ -14,6 +14,7 @@ export const NAV: NavItem[] = [
   { id: 'pages', label: 'Pages', icon: 'pages' },
   { id: 'media', label: 'Media Studio', icon: 'media' },
   { id: 'customers', label: 'Customers', icon: 'customers' },
+  { id: 'marketing', label: 'Marketing', icon: 'sparkles' },
   { id: 'seo', label: 'SEO Center', icon: 'seo' },
   { id: 'performance', label: 'Performance', icon: 'performance' },
   { id: 'security', label: 'Security', icon: 'security' },
