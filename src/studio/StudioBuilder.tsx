@@ -29,20 +29,24 @@ export default function StudioBuilder({ device, zoom }: { device: 'desktop' | 'm
   const blocks = page?.blocks || []
   const selected = blocks.find(b => b.id === sel) || null
 
-  const commit = (next: Block[]) => { setHist(h => [...h.slice(-40), blocks]); setFuture([]); setPage(p => p ? { ...p, blocks: next } : p); setDirty(true) }
+  // Robust functional update — derives from the latest blocks so rapid edits never clobber each other.
+  const apply = (fn: (bs: Block[]) => Block[]) => {
+    setHist(h => [...h.slice(-50), blocks]); setFuture([]); setDirty(true)
+    setPage(p => p ? { ...p, blocks: fn(p.blocks) } : p)
+  }
   const undo = () => { if (!hist.length) return; setFuture(f => [blocks, ...f]); setPage(p => p ? { ...p, blocks: hist[hist.length - 1] } : p); setHist(h => h.slice(0, -1)); setDirty(true) }
   const redo = () => { if (!future.length) return; setHist(h => [...h, blocks]); setPage(p => p ? { ...p, blocks: future[0] } : p); setFuture(f => f.slice(1)); setDirty(true) }
 
   const addBlock = (type: BlockType) => {
     const b = newBlock(type)
-    const idx = sel ? blocks.findIndex(x => x.id === sel) + 1 : blocks.length
-    commit([...blocks.slice(0, idx), b, ...blocks.slice(idx)]); setSel(b.id)
+    apply(bs => { const idx = sel ? bs.findIndex(x => x.id === sel) + 1 : bs.length; return [...bs.slice(0, idx), b, ...bs.slice(idx)] })
+    setSel(b.id)
   }
-  const updateBlock = (id: string, props: Record<string, unknown>) => commit(blocks.map(b => b.id === id ? { ...b, props: { ...b.props, ...props } } : b))
-  const setFlag = (id: string, k: 'hideMobile' | 'hideDesktop', v: boolean) => commit(blocks.map(b => b.id === id ? { ...b, [k]: v } : b))
-  const move = (id: string, dir: number) => { const i = blocks.findIndex(b => b.id === id); const j = i + dir; if (j < 0 || j >= blocks.length) return; const n = [...blocks];[n[i], n[j]] = [n[j], n[i]]; commit(n) }
-  const dup = (id: string) => { const b = blocks.find(x => x.id === id); if (!b) return; const c = { ...b, id: uid(), props: { ...b.props } }; const i = blocks.findIndex(x => x.id === id); commit([...blocks.slice(0, i + 1), c, ...blocks.slice(i + 1)]); setSel(c.id) }
-  const del = (id: string) => { commit(blocks.filter(b => b.id !== id)); setSel(null) }
+  const updateBlock = (id: string, props: Record<string, unknown>) => apply(bs => bs.map(b => b.id === id ? { ...b, props: { ...b.props, ...props } } : b))
+  const setFlag = (id: string, k: 'hideMobile' | 'hideDesktop', v: boolean) => apply(bs => bs.map(b => b.id === id ? { ...b, [k]: v } : b))
+  const move = (id: string, dir: number) => apply(bs => { const i = bs.findIndex(b => b.id === id); const j = i + dir; if (j < 0 || j >= bs.length) return bs; const n = [...bs];[n[i], n[j]] = [n[j], n[i]]; return n })
+  const dup = (id: string) => { const nid = uid(); apply(bs => { const b = bs.find(x => x.id === id); if (!b) return bs; const i = bs.findIndex(x => x.id === id); return [...bs.slice(0, i + 1), { ...b, id: nid, props: { ...b.props } }, ...bs.slice(i + 1)] }); setSel(nid) }
+  const del = (id: string) => { apply(bs => bs.filter(b => b.id !== id)); setSel(null) }
 
   const openPage = async (slug: string) => { const p = await adminGetPage(slug); setPage(p); setSel(null); setHist([]); setFuture([]); setDirty(false) }
   const createPage = async () => {
@@ -182,15 +186,32 @@ function Props({ block, onProp, onFlag }: { block: Block; onProp: (p: Record<str
         <G title="Content"><Area v={s('text')} onV={v => onProp({ text: v })} /></G>
       )}
       {block.type === 'heading' && (
-        <G title="Heading">
+        <G title="Typography">
           <Seg label="Level" v={s('level', 'h2')} opts={[['h1', 'H1'], ['h2', 'H2'], ['h3', 'H3']]} onV={v => onProp({ level: v })} />
           <Seg label="Font" v={s('font', 'serif')} opts={[['serif', 'Serif'], ['sans', 'Sans']]} onV={v => onProp({ font: v })} />
-          <Sld label="Size" v={n('size', 0)} min={0} max={96} onV={v => onProp({ size: v })} />
+          <Sld label="Size" v={n('size', 0)} min={0} max={120} onV={v => onProp({ size: v })} />
+          <Seg label="Weight" v={String(n('weight', 400))} opts={[['300', 'L'], ['400', 'R'], ['500', 'M'], ['600', 'B']]} onV={v => onProp({ weight: Number(v) })} />
+          <Sld label="Line ht" v={n('lh', 0) || 105} min={80} max={200} onV={v => onProp({ lh: v })} />
+          <Sld label="Tracking" v={n('tracking', -2)} min={-6} max={40} onV={v => onProp({ tracking: v })} />
           <Col label="Color" v={s('color', '#1a1410')} onV={v => onProp({ color: v })} />
         </G>
       )}
-      {block.type === 'eyebrow' && <G title="Style"><Col label="Color" v={s('color', '#b8945a')} onV={v => onProp({ color: v })} /></G>}
-      {block.type === 'text' && <G title="Style"><Sld label="Size" v={n('size', 16)} min={11} max={28} onV={v => onProp({ size: v })} /><Col label="Color" v={s('color', '#7a6a59')} onV={v => onProp({ color: v })} /></G>}
+      {block.type === 'eyebrow' && (
+        <G title="Style">
+          <Sld label="Size" v={n('size', 11)} min={9} max={20} onV={v => onProp({ size: v })} />
+          <Sld label="Tracking" v={n('tracking', 30)} min={0} max={60} onV={v => onProp({ tracking: v })} />
+          <Col label="Color" v={s('color', '#b8945a')} onV={v => onProp({ color: v })} />
+        </G>
+      )}
+      {block.type === 'text' && (
+        <G title="Typography">
+          <Sld label="Size" v={n('size', 16)} min={11} max={64} onV={v => onProp({ size: v })} />
+          <Seg label="Weight" v={String(n('weight', 300))} opts={[['300', 'L'], ['400', 'R'], ['500', 'M'], ['600', 'B']]} onV={v => onProp({ weight: Number(v) })} />
+          <Sld label="Line ht" v={n('lh', 0) || 175} min={110} max={240} onV={v => onProp({ lh: v })} />
+          <Sld label="Tracking" v={n('tracking', 0)} min={-4} max={40} onV={v => onProp({ tracking: v })} />
+          <Col label="Color" v={s('color', '#7a6a59')} onV={v => onProp({ color: v })} />
+        </G>
+      )}
       {block.type === 'image' && (
         <G title="Image">
           <div style={{ width: '100%', height: 64, borderRadius: 7, background: 'var(--st-bg-2)', border: '1px solid var(--st-border)', backgroundImage: s('src') ? `url(${s('src')})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', marginBottom: 8 }} />

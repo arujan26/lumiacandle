@@ -68,16 +68,16 @@ export function BlockView({ block }: { block: Block }) {
   let content: React.ReactNode = null
   switch (block.type) {
     case 'eyebrow':
-      content = <span style={{ fontSize: 11, letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 600, color: str('color', '#b8945a') }}>{str('text')}</span>
+      content = <span style={{ fontSize: num('size', 11), letterSpacing: `${num('tracking', 30) / 100}em`, textTransform: 'uppercase', fontWeight: 600, color: str('color', '#b8945a') }}>{str('text')}</span>
       break
     case 'heading': {
       const Tag = (str('level', 'h2') as 'h1' | 'h2' | 'h3')
       const sz = num('size', 0)
-      content = <Tag style={{ fontFamily: str('font', 'serif') === 'serif' ? 'var(--serif)' : 'var(--sans)', color: str('color', '#1a1410'), margin: 0, lineHeight: 1.05, ...(sz ? { fontSize: sz } : {}) }}>{str('text')}</Tag>
+      content = <Tag style={{ fontFamily: str('font', 'serif') === 'serif' ? 'var(--serif)' : 'var(--sans)', color: str('color', '#1a1410'), margin: 0, fontWeight: num('weight', 400), lineHeight: (num('lh', 0) || 105) / 100, letterSpacing: `${num('tracking', -2) / 100}em`, ...(sz ? { fontSize: sz } : {}) }}>{str('text')}</Tag>
       break
     }
     case 'text':
-      content = <p style={{ color: str('color', '#7a6a59'), fontSize: num('size', 16), lineHeight: 1.75, fontWeight: 300, maxWidth: num('maxWidth', 620), margin: str('align', 'center') === 'center' ? '0 auto' : 0 }}>{str('text')}</p>
+      content = <p style={{ color: str('color', '#7a6a59'), fontSize: num('size', 16), lineHeight: (num('lh', 0) || 175) / 100, fontWeight: num('weight', 300), letterSpacing: `${num('tracking', 0) / 100}em`, maxWidth: num('maxWidth', 620), margin: str('align', 'center') === 'center' ? '0 auto' : 0 }}>{str('text')}</p>
       break
     case 'image':
       content = (
