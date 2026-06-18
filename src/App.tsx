@@ -15,6 +15,7 @@ import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
+import CustomPage from './pages/CustomPage'
 import AccountPage from './pages/AccountPage'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminLogin from './pages/admin/AdminLogin'
@@ -119,6 +120,7 @@ function StoreApp() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/order/success" element={<OrderSuccessPage />} />
         <Route path="/account" element={<AccountPage />} />
+        <Route path="/p/:slug" element={<CustomPage />} />
       </Route>
 
       {/* Lumia Studio — premium dashboard (gated) */}
